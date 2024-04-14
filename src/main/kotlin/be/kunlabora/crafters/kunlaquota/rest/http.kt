@@ -12,7 +12,7 @@ val apiRoutes: RouterFunctionDsl.() -> Unit = {
         GET { ServerResponse.ok().body(quotes.findAll()) }
         POST { request ->
             val addQuote = request.body<AddQuote>()
-            val quote: Quote = execute(addQuote)
+            val quote: Quote = execute(addQuote, quotes)
             ServerResponse.created(quote.id.asUri(request)).build()
         }
     }
@@ -25,7 +25,10 @@ data class AddQuote(val quote: String)
 
 val quotes = Quotes()
 
-fun execute(addQuote: AddQuote): Quote = Quote(QuoteId.new(), addQuote.quote).also { quotes.store(it) }
+fun execute(
+    addQuote: AddQuote,
+    quotes: Quotes,
+): Quote = Quote(QuoteId.new(), addQuote.quote).also { quotes.store(it) }
 
 typealias QuoteId = EntityId<Quote>
 data class Quote(val id: QuoteId, val quotedString: String)
