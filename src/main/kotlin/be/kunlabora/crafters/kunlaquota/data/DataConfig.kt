@@ -10,7 +10,7 @@ import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories
 class DataConfig {
 
     @Bean
-    fun inMemQuoteRepository(jdbcAggregateTemplate: JdbcAggregateTemplate, quoteDAO: QuoteDAO) =
+    fun quoteRepository(jdbcAggregateTemplate: JdbcAggregateTemplate, quoteDAO: QuoteDAO) =
         DBQuoteRepository(jdbcAggregateTemplate, quoteDAO)
 
 }

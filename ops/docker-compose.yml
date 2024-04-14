@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_DB: kunlaquota
+      POSTGRES_USER: kunla
+      POSTGRES_PASSWORD: quota
+    ports:
+      - "5432:5432"

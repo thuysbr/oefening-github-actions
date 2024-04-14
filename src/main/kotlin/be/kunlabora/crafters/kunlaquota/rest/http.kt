@@ -16,9 +16,16 @@ fun apiRoutes(quotes: Quotes): RouterFunctionDsl.() -> Unit = {
         is Either.Right -> ServerResponse.created(value.id.asUri(request)).build()
 
     }
+    fun Either<Failure, List<Quote>>.toResponse() = when(this) {
+        is Either.Left -> TODO("error handling")
+        is Either.Right -> ServerResponse.ok().body(value)
+    }
 
     "/quote".nest {
-        GET { ServerResponse.ok().body(quotes.findAll()) }
+        GET {
+            quotes.findAll()
+                .toResponse()
+        }
         POST { request ->
             request.body<AddQuote>()
                 .execute()
@@ -26,6 +33,7 @@ fun apiRoutes(quotes: Quotes): RouterFunctionDsl.() -> Unit = {
         }
     }
 }
+
 
 private fun <E> EntityId<E>.asUri(request: ServerRequest): URI =
     request.uriBuilder().path("/{id}").build(this.value)

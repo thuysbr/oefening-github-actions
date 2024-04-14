@@ -35,7 +35,7 @@ class DBQuoteRepository(
 
 }
 
-@Table("QUOTE")
+@Table("quote")
 data class QuoteRecord(
     @Id
     val id: String,
