@@ -1,9 +1,7 @@
 package be.kunlabora.crafters.kunlaquota.rest
 
-import be.kunlabora.crafters.kunlaquota.service.AddQuote
-import be.kunlabora.crafters.kunlaquota.service.EntityId
-import be.kunlabora.crafters.kunlaquota.service.Quote
-import be.kunlabora.crafters.kunlaquota.service.Quotes
+import be.kunlabora.crafters.kunlaquota.Failure
+import be.kunlabora.crafters.kunlaquota.service.*
 import org.springframework.web.servlet.function.RouterFunctionDsl
 import org.springframework.web.servlet.function.ServerRequest
 import org.springframework.web.servlet.function.ServerResponse
@@ -13,7 +11,11 @@ import java.net.URI
 
 fun apiRoutes(quotes: Quotes): RouterFunctionDsl.() -> Unit = {
     fun AddQuote.execute() = quotes.execute(this)
-    fun Quote.toResponse(request: ServerRequest) = ServerResponse.created(id.asUri(request)).build()
+    fun Either<Failure, Quote>.toResponse(request: ServerRequest) = when(this){
+        is Either.Left -> TODO("error handling")
+        is Either.Right -> ServerResponse.created(value.id.asUri(request)).build()
+
+    }
 
     "/quote".nest {
         GET { ServerResponse.ok().body(quotes.findAll()) }

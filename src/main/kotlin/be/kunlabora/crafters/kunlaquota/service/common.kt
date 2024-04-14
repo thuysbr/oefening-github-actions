@@ -12,3 +12,13 @@ class EntityId<E> private constructor(val value: String) {
 
 //marker interface
 interface Command
+
+sealed class Either<out F, out T> {
+    data class Left<F>(val value: F) : Either<F, Nothing>()
+    data class Right<T>(val value: T) : Either<Nothing, T>()
+
+    fun valueOrThrow() = when(this) {
+        is Left -> error("nope")
+        is Right -> this.value
+    }
+}
