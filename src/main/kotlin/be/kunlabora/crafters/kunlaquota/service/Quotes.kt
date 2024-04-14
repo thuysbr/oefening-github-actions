@@ -11,5 +11,5 @@ class Quotes(
 
     private fun Quote.store() = quoteRepository.store(this)
 
-    fun findAll() = quoteRepository.findAll()
+    fun findAll() : Either<Failure, List<Quote>> = quoteRepository.findAll()
 }

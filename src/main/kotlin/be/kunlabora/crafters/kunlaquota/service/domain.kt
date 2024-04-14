@@ -14,5 +14,5 @@ data class Quote(
 
 interface QuoteRepository {
     fun store(quote: Quote): Either<Failure, Quote>
-    fun findAll(): List<Quote>
+    fun findAll(): Either<Failure, List<Quote>>
 }
