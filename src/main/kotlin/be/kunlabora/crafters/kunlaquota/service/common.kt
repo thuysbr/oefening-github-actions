@@ -18,7 +18,7 @@ sealed class Either<out F, out T> {
     data class Right<T>(val value: T) : Either<Nothing, T>()
 
     fun valueOrThrow() = when(this) {
-        is Left -> error("nope")
+        is Left -> error("You expected a Right, but got a Left of ${this.value}")
         is Right -> this.value
     }
 }
