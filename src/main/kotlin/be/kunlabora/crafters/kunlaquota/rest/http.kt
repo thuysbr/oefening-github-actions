@@ -25,17 +25,17 @@ data class AddQuote(val quote: String)
 
 val quotes = Quotes()
 
-fun Quotes.execute(
-    addQuote: AddQuote,
-): Quote = Quote(QuoteId.new(), addQuote.quote).also { store(it) }
-
 typealias QuoteId = EntityId<Quote>
 data class Quote(val id: QuoteId, val quotedString: String)
 
 class Quotes {
     private val backingList: MutableList<Quote> = mutableListOf()
 
-    fun store(quote: Quote) = backingList.add(quote)
+    fun execute(addQuote: AddQuote): Quote =
+        Quote(QuoteId.new(), addQuote.quote)
+            .also { store(it) }
+    private fun store(quote: Quote) = backingList.add(quote)
+
     fun findAll() = backingList.toList()
 }
 
