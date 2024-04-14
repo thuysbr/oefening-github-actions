@@ -8,8 +8,4 @@ class ServiceConfig {
     @Bean
     fun quotes(quoteRepository: QuoteRepository) =
         Quotes(quoteRepository)
-
-//    @Bean
-//    fun quoteRepository() =
-//        QuoteRepositoryStub()
 }
