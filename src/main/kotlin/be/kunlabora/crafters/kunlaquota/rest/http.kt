@@ -12,12 +12,15 @@ import java.net.URI
 
 
 fun apiRoutes(quotes: Quotes): RouterFunctionDsl.() -> Unit = {
+    fun AddQuote.execute() = quotes.execute(this)
+    fun Quote.toResponse(request: ServerRequest) = ServerResponse.created(id.asUri(request)).build()
+
     "/quote".nest {
         GET { ServerResponse.ok().body(quotes.findAll()) }
         POST { request ->
-            val addQuote = request.body<AddQuote>()
-            val quote: Quote = quotes.execute(addQuote)
-            ServerResponse.created(quote.id.asUri(request)).build()
+            request.body<AddQuote>()
+                .execute()
+                .toResponse(request)
         }
     }
 }
