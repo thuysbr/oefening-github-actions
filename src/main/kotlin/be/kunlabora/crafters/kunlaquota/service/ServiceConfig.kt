@@ -11,5 +11,5 @@ class ServiceConfig {
 
     @Bean
     fun quoteRepository() =
-        QuoteRepository()
+        QuoteRepositoryStub()
 }

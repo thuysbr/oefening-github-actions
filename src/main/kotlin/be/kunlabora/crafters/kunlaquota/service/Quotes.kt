@@ -2,12 +2,16 @@ package be.kunlabora.crafters.kunlaquota.service
 
 import java.util.*
 
-class QuoteRepository{
+interface QuoteRepository {
+    fun store(quote: Quote): Quote
+    fun findAll(): List<Quote>
+}
+
+class QuoteRepositoryStub : QuoteRepository {
     private val backingList: MutableList<Quote> = mutableListOf()
 
-    fun store(quote: Quote) = backingList.add(quote)
-
-    fun findAll() = backingList.toList()
+    override fun store(quote: Quote) = quote.also { backingList.add(quote) }
+    override fun findAll() = backingList.toList()
 }
 
 class Quotes(
