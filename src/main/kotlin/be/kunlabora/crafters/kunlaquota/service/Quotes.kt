@@ -15,7 +15,11 @@ class Quotes(
 data class AddQuote(val quote: String)
 
 typealias QuoteId = EntityId<Quote>
-data class Quote(val id: QuoteId, val quotedString: String)
+
+data class Quote(
+    val id: QuoteId,
+    val text: String
+)
 
 interface QuoteRepository {
     fun store(quote: Quote): Quote
