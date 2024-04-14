@@ -23,15 +23,19 @@ private fun <E> EntityId<E>.asUri(request: ServerRequest): URI =
 
 data class AddQuote(val quote: String)
 
-val quotes = mutableListOf<Quote>()
-fun MutableList<Quote>.store(quote: Quote) = this.add(quote)
-fun MutableList<Quote>.findAll() = this
+val quotes = Quotes()
 
 fun execute(addQuote: AddQuote): Quote = Quote(QuoteId.new(), addQuote.quote).also { quotes.store(it) }
 
+typealias QuoteId = EntityId<Quote>
 data class Quote(val id: QuoteId, val quotedString: String)
 
-typealias QuoteId = EntityId<Quote>
+class Quotes {
+    private val backingList: MutableList<Quote> = mutableListOf()
+
+    fun store(quote: Quote) = backingList.add(quote)
+    fun findAll() = backingList.toList()
+}
 
 @Suppress("unused")
 class EntityId<E> private constructor(val value: String) {
