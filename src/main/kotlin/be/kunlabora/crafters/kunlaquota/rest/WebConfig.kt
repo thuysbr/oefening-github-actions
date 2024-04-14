@@ -12,8 +12,10 @@ import org.springframework.web.servlet.function.router
 class WebConfig : WebMvcConfigurer {
 
     @Bean
-    fun apiRoutes() = router {
-        val quotes = Quotes()
+    fun quotes(): Quotes = Quotes()
+
+    @Bean
+    fun apiRoutesBean(quotes: Quotes) = router {
         "/api".nest(apiRoutes(quotes))
     }
 
