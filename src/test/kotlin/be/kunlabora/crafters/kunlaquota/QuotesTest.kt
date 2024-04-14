@@ -31,6 +31,17 @@ class QuotesTest {
         assertThat(actual).isEqualTo(Either.Left(AddQuoteFailed))
     }
 
+    @Test
+    fun `When adding a quote succeeds, the quote is returned`() {
+        assertThat(quoteRepositoryStub.findAll()).isEmpty()
+
+        val actual = quotes.execute(AddQuote(name = "Snarf", text = "Snarf snarf"))
+
+        val expectedQuote = quoteRepositoryStub.findAll().first()
+
+        assertThat(actual).isEqualTo(Either.Right(expectedQuote))
+    }
+
     private fun Quote.save() =
         quoteRepositoryStub.store(this)
 }
