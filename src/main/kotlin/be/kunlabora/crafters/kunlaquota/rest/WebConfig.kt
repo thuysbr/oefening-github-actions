@@ -12,7 +12,10 @@ import org.springframework.web.servlet.function.router
 class WebConfig : WebMvcConfigurer {
 
     @Bean
-    fun apiRoutes() = router { "/api".nest(apiRoutes) }
+    fun apiRoutes() = router {
+        val quotes = Quotes()
+        "/api".nest(apiRoutes(quotes))
+    }
 
     override fun configureMessageConverters(converters: List<HttpMessageConverter<*>>) {
         // configure message conversion...

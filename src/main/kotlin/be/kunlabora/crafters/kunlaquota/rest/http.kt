@@ -7,7 +7,8 @@ import org.springframework.web.servlet.function.body
 import java.net.URI
 import java.util.*
 
-val apiRoutes: RouterFunctionDsl.() -> Unit = {
+
+fun apiRoutes(quotes: Quotes): RouterFunctionDsl.() -> Unit = {
     "/quote".nest {
         GET { ServerResponse.ok().body(quotes.findAll()) }
         POST { request ->
@@ -23,7 +24,6 @@ private fun <E> EntityId<E>.asUri(request: ServerRequest): URI =
 
 data class AddQuote(val quote: String)
 
-val quotes = Quotes()
 
 typealias QuoteId = EntityId<Quote>
 data class Quote(val id: QuoteId, val quotedString: String)
