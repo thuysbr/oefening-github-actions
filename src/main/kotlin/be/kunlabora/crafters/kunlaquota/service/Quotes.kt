@@ -2,15 +2,24 @@ package be.kunlabora.crafters.kunlaquota.service
 
 import java.util.*
 
-class Quotes {
+class QuoteRepository{
     private val backingList: MutableList<Quote> = mutableListOf()
 
+    fun store(quote: Quote) = backingList.add(quote)
+
+    fun findAll() = backingList.toList()
+}
+
+class Quotes(
+    private val quoteRepository: QuoteRepository,
+) {
     fun execute(addQuote: AddQuote): Quote =
         Quote(QuoteId.new(), addQuote.quote)
             .also { store(it) }
-    private fun store(quote: Quote) = backingList.add(quote)
 
-    fun findAll() = backingList.toList()
+    private fun store(quote: Quote) = quoteRepository.store(quote)
+
+    fun findAll() = quoteRepository.findAll()
 }
 
 data class AddQuote(val quote: String)
