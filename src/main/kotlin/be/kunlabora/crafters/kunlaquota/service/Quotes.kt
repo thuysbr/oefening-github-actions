@@ -5,23 +5,9 @@ class Quotes(
 ) {
     fun execute(addQuote: AddQuote): Quote =
         Quote(QuoteId.new(), addQuote.quote)
-            .also { store(it) }
+            .store()
 
-    private fun store(quote: Quote) = quoteRepository.store(quote)
+    private fun Quote.store() = quoteRepository.store(this)
 
     fun findAll() = quoteRepository.findAll()
-}
-
-data class AddQuote(val quote: String)
-
-typealias QuoteId = EntityId<Quote>
-
-data class Quote(
-    val id: QuoteId,
-    val text: String
-)
-
-interface QuoteRepository {
-    fun store(quote: Quote): Quote
-    fun findAll(): List<Quote>
 }

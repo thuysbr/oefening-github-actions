@@ -8,13 +8,15 @@ import org.springframework.data.jdbc.core.JdbcAggregateTemplate
 import org.springframework.data.relational.core.mapping.Table
 import org.springframework.data.repository.CrudRepository
 
-class InMemQuoteRepository(
+class DBQuoteRepository(
     private val jdbcAggregateTemplate: JdbcAggregateTemplate,
     private val quoteDAO: QuoteDAO,
 ) : QuoteRepository {
 
-    //JdbcAggregateTemplate required, because we decide in code when an entity gets a new EntityId
-    //Using the DAO would delegate to an update method instead of an insert method ¯\_(ツ)_/¯
+    /*
+     * JdbcAggregateTemplate required, because we decide in code when an entity gets a new EntityId
+     * Using the DAO would delegate to an update method instead of an insert method ¯\_(ツ)_/¯
+     */
     override fun store(quote: Quote): Quote =
         jdbcAggregateTemplate.insert(quote.toRecord()).toQuote()
 

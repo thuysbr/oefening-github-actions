@@ -9,3 +9,6 @@ class EntityId<E> private constructor(val value: String) {
         fun <E> fromString(value: String): EntityId<E> = EntityId(UUID.fromString(value).toString())
     }
 }
+
+//marker interface
+interface Command

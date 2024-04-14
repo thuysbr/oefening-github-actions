@@ -11,6 +11,6 @@ class DataConfig {
 
     @Bean
     fun inMemQuoteRepository(jdbcAggregateTemplate: JdbcAggregateTemplate, quoteDAO: QuoteDAO) =
-        InMemQuoteRepository(jdbcAggregateTemplate, quoteDAO)
+        DBQuoteRepository(jdbcAggregateTemplate, quoteDAO)
 
 }
