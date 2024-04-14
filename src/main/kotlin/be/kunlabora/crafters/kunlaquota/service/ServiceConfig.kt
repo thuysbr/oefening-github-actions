@@ -1,5 +1,6 @@
 package be.kunlabora.crafters.kunlaquota.service
 
+import be.kunlabora.crafters.kunlaquota.data.QuoteRepositoryStub
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 

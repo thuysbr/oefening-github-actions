@@ -1,19 +1,5 @@
 package be.kunlabora.crafters.kunlaquota.service
 
-import java.util.*
-
-interface QuoteRepository {
-    fun store(quote: Quote): Quote
-    fun findAll(): List<Quote>
-}
-
-class QuoteRepositoryStub : QuoteRepository {
-    private val backingList: MutableList<Quote> = mutableListOf()
-
-    override fun store(quote: Quote) = quote.also { backingList.add(quote) }
-    override fun findAll() = backingList.toList()
-}
-
 class Quotes(
     private val quoteRepository: QuoteRepository,
 ) {
@@ -31,10 +17,7 @@ data class AddQuote(val quote: String)
 typealias QuoteId = EntityId<Quote>
 data class Quote(val id: QuoteId, val quotedString: String)
 
-
-@Suppress("unused")
-class EntityId<E> private constructor(val value: String) {
-    companion object {
-        fun <E> new(): EntityId<E> = EntityId(UUID.randomUUID().toString())
-    }
+interface QuoteRepository {
+    fun store(quote: Quote): Quote
+    fun findAll(): List<Quote>
 }
