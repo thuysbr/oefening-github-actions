@@ -1,6 +1,7 @@
 package be.kunlabora.crafters.kunlaquota
 
 import be.kunlabora.crafters.kunlaquota.service.Either
+import be.kunlabora.crafters.kunlaquota.service.Either.Left
 
 interface CanReturnFailure {
     fun failOnNext(fn: String, failure: Failure)
@@ -13,9 +14,9 @@ class FailureStub : CanReturnFailure {
         registeredFailures.put(fn, failure)
     }
 
-    operator fun <T> invoke(fn: String, block: () -> T): Either<Failure, T> {
+    operator fun <T> invoke(fn: String, block: () -> Either<Failure, T>): Either<Failure, T> {
         return registeredFailures[fn]
-            ?.let { Either.Left(it) }
-            ?: Either.Right(block())
+            ?.let { Left(it) }
+            ?: block()
     }
 }
