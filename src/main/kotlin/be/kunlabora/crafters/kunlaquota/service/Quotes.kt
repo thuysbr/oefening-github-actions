@@ -1,6 +1,10 @@
 package be.kunlabora.crafters.kunlaquota.service
 
 import be.kunlabora.crafters.kunlaquota.Failure
+import be.kunlabora.crafters.kunlaquota.service.domain.AddQuote
+import be.kunlabora.crafters.kunlaquota.service.domain.Quote
+import be.kunlabora.crafters.kunlaquota.service.domain.QuoteId
+import be.kunlabora.crafters.kunlaquota.service.domain.QuoteRepository
 
 class Quotes(
     private val quoteRepository: QuoteRepository,

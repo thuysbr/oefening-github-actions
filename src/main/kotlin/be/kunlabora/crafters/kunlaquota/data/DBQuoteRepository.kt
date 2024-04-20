@@ -3,9 +3,9 @@ package be.kunlabora.crafters.kunlaquota.data
 import be.kunlabora.crafters.kunlaquota.AddQuoteFailed
 import be.kunlabora.crafters.kunlaquota.FetchQuotesFailed
 import be.kunlabora.crafters.kunlaquota.service.Either
-import be.kunlabora.crafters.kunlaquota.service.Quote
-import be.kunlabora.crafters.kunlaquota.service.QuoteId
-import be.kunlabora.crafters.kunlaquota.service.QuoteRepository
+import be.kunlabora.crafters.kunlaquota.service.domain.Quote
+import be.kunlabora.crafters.kunlaquota.service.domain.QuoteId
+import be.kunlabora.crafters.kunlaquota.service.domain.QuoteRepository
 import org.springframework.data.annotation.Id
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate
 import org.springframework.data.relational.core.mapping.Table

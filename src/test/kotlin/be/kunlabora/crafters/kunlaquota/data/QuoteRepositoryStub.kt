@@ -4,8 +4,8 @@ import be.kunlabora.crafters.kunlaquota.CanReturnFailure
 import be.kunlabora.crafters.kunlaquota.Failure
 import be.kunlabora.crafters.kunlaquota.FailureStub
 import be.kunlabora.crafters.kunlaquota.service.Either
-import be.kunlabora.crafters.kunlaquota.service.Quote
-import be.kunlabora.crafters.kunlaquota.service.QuoteRepository
+import be.kunlabora.crafters.kunlaquota.service.domain.Quote
+import be.kunlabora.crafters.kunlaquota.service.domain.QuoteRepository
 
 class QuoteRepositoryStub(private val orFail: FailureStub = FailureStub()) : QuoteRepository, CanReturnFailure by orFail {
     private val backingList: MutableList<Quote> = mutableListOf()

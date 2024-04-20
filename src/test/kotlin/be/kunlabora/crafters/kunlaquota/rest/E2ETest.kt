@@ -1,13 +1,16 @@
 package be.kunlabora.crafters.kunlaquota.rest
 
 import be.kunlabora.crafters.kunlaquota.TestKunlaquotaApplication
-import be.kunlabora.crafters.kunlaquota.service.Quote
-import org.assertj.core.api.Assertions
+import be.kunlabora.crafters.kunlaquota.service.domain.AddQuote
+import be.kunlabora.crafters.kunlaquota.service.domain.Quote
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.boot.test.web.client.getForEntity
+import org.springframework.boot.test.web.client.exchange
+import org.springframework.http.HttpMethod
+import org.springframework.http.ResponseEntity
 
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
@@ -18,9 +21,12 @@ class E2ETest(
 ) {
 
     @Test
-    fun `fetching quotes when there haven't been any added`() {
-        val quotes: List<Quote> = restTemplate.getForEntity<List<Quote>>("/api/quote").body!!
+    fun `adding and fetching quotes`() {
+        val newLocation = restTemplate.postForLocation("/api/quote", AddQuote("Lion-o", "STFU Snarf!"))
+        assertThat(newLocation.path).isNotEmpty()
 
-        Assertions.assertThat(quotes).isEmpty()
+        val response: ResponseEntity<List<Quote>> = restTemplate.exchange("/api/quote", HttpMethod.GET)
+
+        assertThat(response.body?.map { it.id.value }).containsExactly(newLocation.path.substringAfterLast('/'))
     }
 }

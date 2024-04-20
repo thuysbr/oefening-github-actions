@@ -1,7 +1,11 @@
 package be.kunlabora.crafters.kunlaquota.rest
 
 import be.kunlabora.crafters.kunlaquota.Failure
-import be.kunlabora.crafters.kunlaquota.service.*
+import be.kunlabora.crafters.kunlaquota.service.Either
+import be.kunlabora.crafters.kunlaquota.service.EntityId
+import be.kunlabora.crafters.kunlaquota.service.Quotes
+import be.kunlabora.crafters.kunlaquota.service.domain.AddQuote
+import be.kunlabora.crafters.kunlaquota.service.domain.Quote
 import org.springframework.web.servlet.function.RouterFunctionDsl
 import org.springframework.web.servlet.function.ServerRequest
 import org.springframework.web.servlet.function.ServerResponse
