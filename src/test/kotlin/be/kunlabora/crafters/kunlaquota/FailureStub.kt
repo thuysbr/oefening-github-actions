@@ -11,7 +11,7 @@ class FailureStub : CanReturnFailure {
     private val registeredFailures: MutableMap<String, Failure> = mutableMapOf()
 
     override fun failOnNext(fn: String, failure: Failure) {
-        registeredFailures.put(fn, failure)
+        registeredFailures[fn] = failure
     }
 
     operator fun <T> invoke(fn: String, block: () -> Either<Failure, T>): Either<Failure, T> {
