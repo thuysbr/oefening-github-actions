@@ -6,14 +6,19 @@ import be.kunlabora.crafters.kunlaquota.service.domain.Quote
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteId
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteRepository
 
+interface IQuotes {
+    fun execute(addQuote: AddQuote): Either<Failure, Quote>
+    fun findAll() : Either<Failure, List<Quote>>
+}
+
 class Quotes(
     private val quoteRepository: QuoteRepository,
-) {
-    fun execute(addQuote: AddQuote): Either<Failure, Quote> =
+) : IQuotes {
+    override fun execute(addQuote: AddQuote): Either<Failure, Quote> =
         Quote(QuoteId.new(), "Snarf", addQuote.text)
             .store()
 
     private fun Quote.store() = quoteRepository.store(this)
 
-    fun findAll() : Either<Failure, List<Quote>> = quoteRepository.findAll()
+    override fun findAll() : Either<Failure, List<Quote>> = quoteRepository.findAll()
 }
