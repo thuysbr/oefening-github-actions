@@ -40,11 +40,11 @@ class QuotesTest {
 
     @Test
     fun `When adding a quote fails, a failure is returned`() {
-        quoteRepositoryStub.failOnNext(QuoteRepository::store.name, AddQuoteFailed)
+        quoteRepositoryStub.failOnNext(QuoteRepository::store.name, AddQuoteFailed("💩"))
 
         val actual = quotes.execute(AddQuote(name = "Snarf", text = "Snarf snarf"))
 
-        assertThat(actual).isEqualTo(Left(AddQuoteFailed))
+        assertThat(actual).isEqualTo(Left(AddQuoteFailed("💩")))
     }
 
     @Test

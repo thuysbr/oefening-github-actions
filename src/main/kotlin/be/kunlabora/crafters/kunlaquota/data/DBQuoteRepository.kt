@@ -23,7 +23,7 @@ class DBQuoteRepository(
      * Using the DAO would delegate to an update method instead of an insert method ¯\_(ツ)_/¯
      */
     override fun store(quote: Quote): Either<AddQuoteFailed, Quote> =
-        if (quoteDAO.existsById(quote.id.value)) Left(AddQuoteFailed)
+        if (quoteDAO.existsById(quote.id.value)) Left(AddQuoteFailed("Quote already exists!"))
         else Right(jdbcAggregateTemplate.insert(quote.toRecord()).toQuote())
 
     override fun findAll(): Either<FetchQuotesFailed, List<Quote>> =

@@ -14,7 +14,7 @@ class QuoteRepositoryStub(private val orFail: FailureStub = FailureStub()) : Quo
     private val backingList: MutableList<Quote> = mutableListOf()
 
     override fun store(quote: Quote): Either<Failure, Quote> = orFail(QuoteRepository::store.name) {
-        if (quote.id in backingList.map { it.id }) Left(AddQuoteFailed)
+        if (quote.id in backingList.map { it.id }) Left(AddQuoteFailed("Quote already exists!"))
         else Right(quote).also { backingList.add(quote) }
     }
 

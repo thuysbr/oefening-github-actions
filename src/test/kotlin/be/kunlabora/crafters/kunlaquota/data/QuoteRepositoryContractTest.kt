@@ -35,7 +35,7 @@ abstract class QuoteRepositoryContractTest(private val quoteRepository: QuoteRep
 
         val actual = quoteRepository.store(aStoredQuote)
 
-        assertThat(actual).isEqualTo(Either.Left(AddQuoteFailed))
+        assertThat(actual).isEqualTo(Either.Left(AddQuoteFailed("Quote already exists!")))
     }
 
     private fun Quote.save() : Quote = quoteRepository.store(this).valueOrThrow()
