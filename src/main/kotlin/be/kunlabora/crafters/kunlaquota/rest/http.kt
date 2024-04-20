@@ -5,7 +5,6 @@ import be.kunlabora.crafters.kunlaquota.service.Either
 import be.kunlabora.crafters.kunlaquota.service.EntityId
 import be.kunlabora.crafters.kunlaquota.service.IQuotes
 import be.kunlabora.crafters.kunlaquota.service.domain.AddQuote
-import be.kunlabora.crafters.kunlaquota.service.domain.Quote
 import org.slf4j.LoggerFactory
 import org.springframework.web.servlet.function.RouterFunctionDsl
 import org.springframework.web.servlet.function.ServerRequest
@@ -13,32 +12,33 @@ import org.springframework.web.servlet.function.ServerResponse
 import org.springframework.web.servlet.function.body
 import java.net.URI
 
-private val logger = LoggerFactory.getLogger("KunlaQuotaLogger")
-
 fun apiRoutes(quotes: IQuotes): RouterFunctionDsl.() -> Unit = {
     fun AddQuote.execute() = quotes.execute(this)
-    fun Either<Failure, Quote>.toResponse(request: ServerRequest) = when(this) {
-        is Either.Left -> ServerResponse.status(500).build().also { logger.error("$value") }
-        is Either.Right -> ServerResponse.created(value.id.asUri(request)).build()
-    }
-    fun Either<Failure, List<Quote>>.toResponse() = when(this) {
-        is Either.Left -> ServerResponse.status(500).build().also { logger.error("$value") }
-        is Either.Right -> ServerResponse.ok().body(value)
-    }
 
     "/quote".nest {
         GET {
             quotes.findAll()
-                .toResponse()
+                .handle { success ->
+                    ServerResponse.ok().body(success.value)
+                }
         }
         POST { request ->
             request.body<AddQuote>()
                 .execute()
-                .toResponse(request)
+                .handle { success ->
+                    ServerResponse.created(success.value.id.asUri(request)).build()
+                }
         }
     }
 }
 
+private fun <T> Either<Failure, T>.handle(success: (Either.Right<T>) -> ServerResponse) =
+    when (this) {
+        is Either.Left -> ServerResponse.status(500).build().also { logger.error("$value") }
+        is Either.Right -> success(this)
+    }
+
+private val logger = LoggerFactory.getLogger("KunlaQuotaLogger")
 
 private fun <E> EntityId<E>.asUri(request: ServerRequest): URI =
     request.uriBuilder().path("/{id}").build(this.value)
