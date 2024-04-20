@@ -8,6 +8,19 @@ class EntityId<E> private constructor(val value: String) {
         fun <E> new(): EntityId<E> = EntityId(UUID.randomUUID().toString())
         fun <E> fromString(value: String): EntityId<E> = EntityId(UUID.fromString(value).toString())
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as EntityId<*>
+
+        return value == other.value
+    }
+
+    override fun hashCode(): Int {
+        return value.hashCode()
+    }
 }
 
 //marker interface

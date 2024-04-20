@@ -28,10 +28,10 @@ class DBQuoteRepository(
             .map { quoteRecord -> quoteRecord.toQuote() })
 
     private fun Quote.toRecord() =
-        QuoteRecord(id.value, text)
+        QuoteRecord(id.value, name, text)
 
     private fun QuoteRecord.toQuote() =
-        Quote(QuoteId.fromString(id), "Snarf", text)
+        Quote(QuoteId.fromString(id), name, text)
 
 }
 
@@ -39,6 +39,7 @@ class DBQuoteRepository(
 data class QuoteRecord(
     @Id
     val id: String,
+    val name: String,
     val text: String,
 )
 
