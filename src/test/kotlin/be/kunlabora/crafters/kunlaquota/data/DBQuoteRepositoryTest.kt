@@ -1,6 +1,7 @@
 package be.kunlabora.crafters.kunlaquota.data
 
 import be.kunlabora.crafters.kunlaquota.service.aDefaultQuote
+import be.kunlabora.crafters.kunlaquota.service.domain.Quote
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -40,4 +41,16 @@ class DBQuoteRepositoryTest(
 
         assertThat(storedQuote).isEqualTo(aQuote)
     }
+
+    @Test
+    fun `can fetch quotes`() {
+        val quote1 = aDefaultQuote(name = "Joker", "Why so serious? :)").save()
+        val quote2 = aDefaultQuote(name = "Uncle Ben", "With great power comes great responsibility").save()
+
+        val quotes = quoteRepository.findAll().valueOrThrow()
+
+        assertThat(quotes).containsExactlyInAnyOrder(quote1, quote2)
+    }
+
+    private fun Quote.save() : Quote = quoteRepository.store(this).valueOrThrow()
 }
