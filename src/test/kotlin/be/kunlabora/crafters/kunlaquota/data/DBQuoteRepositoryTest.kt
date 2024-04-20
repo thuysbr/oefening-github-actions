@@ -34,7 +34,7 @@ class DBQuoteRepositoryTest(
 ) {
 
     @Test
-    fun `can save quotes`() {
+    fun `can store quotes`() {
         val aQuote = aDefaultQuote(name = "Joker", "Why so serious? :)")
 
         val storedQuote = quoteRepository.store(aQuote).valueOrThrow()
@@ -51,6 +51,7 @@ class DBQuoteRepositoryTest(
 
         assertThat(quotes).containsExactlyInAnyOrder(quote1, quote2)
     }
+
 
     private fun Quote.save() : Quote = quoteRepository.store(this).valueOrThrow()
 }
