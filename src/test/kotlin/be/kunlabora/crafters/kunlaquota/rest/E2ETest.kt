@@ -17,7 +17,7 @@ import org.springframework.http.ResponseEntity
     classes = [TestKunlaquotaApplication::class]
 )
 class E2ETest(
-    @Autowired val restTemplate: TestRestTemplate,
+    @Autowired private val restTemplate: TestRestTemplate,
 ) {
 
     @Test
