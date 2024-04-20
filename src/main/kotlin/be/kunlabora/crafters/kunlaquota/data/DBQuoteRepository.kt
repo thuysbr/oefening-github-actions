@@ -3,6 +3,8 @@ package be.kunlabora.crafters.kunlaquota.data
 import be.kunlabora.crafters.kunlaquota.AddQuoteFailed
 import be.kunlabora.crafters.kunlaquota.FetchQuotesFailed
 import be.kunlabora.crafters.kunlaquota.service.Either
+import be.kunlabora.crafters.kunlaquota.service.Either.Left
+import be.kunlabora.crafters.kunlaquota.service.Either.Right
 import be.kunlabora.crafters.kunlaquota.service.domain.Quote
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteId
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteRepository
@@ -21,10 +23,11 @@ class DBQuoteRepository(
      * Using the DAO would delegate to an update method instead of an insert method ¯\_(ツ)_/¯
      */
     override fun store(quote: Quote): Either<AddQuoteFailed, Quote> =
-        Either.Right(jdbcAggregateTemplate.insert(quote.toRecord()).toQuote())
+        if (quoteDAO.existsById(quote.id.value)) Left(AddQuoteFailed)
+        else Right(jdbcAggregateTemplate.insert(quote.toRecord()).toQuote())
 
     override fun findAll(): Either<FetchQuotesFailed, List<Quote>> =
-        Either.Right(quoteDAO.findAll()
+        Right(quoteDAO.findAll()
             .map { quoteRecord -> quoteRecord.toQuote() })
 
     private fun Quote.toRecord() =
