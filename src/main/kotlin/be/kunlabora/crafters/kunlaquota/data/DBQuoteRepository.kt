@@ -43,4 +43,4 @@ data class QuoteRecord(
     val text: String,
 )
 
-interface QuoteDAO : CrudRepository<QuoteRecord, QuoteId>
+interface QuoteDAO : CrudRepository<QuoteRecord, String>
