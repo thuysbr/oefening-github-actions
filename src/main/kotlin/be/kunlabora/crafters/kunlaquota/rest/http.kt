@@ -18,7 +18,6 @@ fun apiRoutes(quotes: Quotes): RouterFunctionDsl.() -> Unit = {
     fun Either<Failure, Quote>.toResponse(request: ServerRequest) = when(this){
         is Either.Left -> TODO("error handling")
         is Either.Right -> ServerResponse.created(value.id.asUri(request)).build()
-
     }
     fun Either<Failure, List<Quote>>.toResponse() = when(this) {
         is Either.Left -> TODO("error handling")

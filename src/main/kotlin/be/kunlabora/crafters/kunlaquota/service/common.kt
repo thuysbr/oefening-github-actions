@@ -18,9 +18,9 @@ class EntityId<E> private constructor(val value: String) {
         return value == other.value
     }
 
-    override fun hashCode(): Int {
-        return value.hashCode()
-    }
+    override fun hashCode(): Int = value.hashCode()
+
+    override fun toString() = "EntityId($value)"
 }
 
 //marker interface
