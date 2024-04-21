@@ -31,10 +31,10 @@ class DBQuoteRepository(
             .map { quoteRecord -> quoteRecord.toQuote() })
 
     private fun Quote.toRecord() =
-        QuoteRecord(id.value, name, text)
+        QuoteRecord(id.value, lines.first().name, lines.first().text)
 
     private fun QuoteRecord.toQuote() =
-        Quote(QuoteId.fromString(id), name, text)
+        Quote(QuoteId.fromString(id), lines = listOf(Quote.Line(1, name, text)))
 
 }
 

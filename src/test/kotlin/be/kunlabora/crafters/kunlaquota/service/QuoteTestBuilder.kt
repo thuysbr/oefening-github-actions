@@ -7,6 +7,5 @@ fun aDefaultQuote(
     text: String = "snarf snarf",
 ) = Quote(
     id = EntityId.new(),
-    name = name,
-    text = text
+    lines = listOf(Quote.Line(1, name, text))
 )

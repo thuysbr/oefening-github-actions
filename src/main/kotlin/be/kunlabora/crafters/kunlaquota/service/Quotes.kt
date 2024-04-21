@@ -15,7 +15,7 @@ class Quotes(
     private val quoteRepository: QuoteRepository,
 ) : IQuotes {
     override fun execute(addQuote: AddQuote): Either<Failure, Quote> =
-        Quote(QuoteId.new(), "Snarf", addQuote.text)
+        Quote(QuoteId.new(), addQuote.lines)
             .store()
 
     private fun Quote.store() = quoteRepository.store(this)

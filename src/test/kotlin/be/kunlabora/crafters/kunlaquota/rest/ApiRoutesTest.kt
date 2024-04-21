@@ -52,7 +52,7 @@ class ApiRoutesTest(
     fun `Failures that occur when adding a quote are logged and transformed to a 500`(capturedOutput: CapturedOutput) {
         mockMvc.post("/api/quote") {
             contentType = MediaType.APPLICATION_JSON
-            content = AddQuote("Lion-o", "STFU Snarf!").toJson()
+            content = AddQuote(listOf(Quote.Line(1, "Lion-o", "STFU Snarf!"))).toJson()
         }.andExpect {
             status { isInternalServerError() }
         }

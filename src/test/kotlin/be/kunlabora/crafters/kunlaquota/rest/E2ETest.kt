@@ -22,7 +22,7 @@ class E2ETest(
 
     @Test
     fun `adding and fetching quotes`() {
-        val newLocation = restTemplate.postForLocation("/api/quote", AddQuote("Lion-o", "STFU Snarf!"))
+        val newLocation = restTemplate.postForLocation("/api/quote", AddQuote(listOf(Quote.Line(1, "Lion-o", "STFU Snarf!"))))
         assertThat(newLocation.path).isNotEmpty()
 
         val response: ResponseEntity<List<Quote>> = restTemplate.exchange("/api/quote", HttpMethod.GET)

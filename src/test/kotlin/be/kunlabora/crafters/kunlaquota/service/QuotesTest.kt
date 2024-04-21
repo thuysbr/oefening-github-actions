@@ -42,7 +42,7 @@ class QuotesTest {
     fun `When adding a quote fails, a failure is returned`() {
         quoteRepositoryStub.failOnNext(QuoteRepository::store.name, AddQuoteFailed("💩"))
 
-        val actual = quotes.execute(AddQuote(name = "Snarf", text = "Snarf snarf"))
+        val actual = quotes.execute(AddQuote(lines = listOf(Quote.Line(1, name = "Snarf", text = "Snarf snarf"))))
 
         assertThat(actual).isEqualTo(Left(AddQuoteFailed("💩")))
     }
@@ -51,7 +51,7 @@ class QuotesTest {
     fun `When adding a quote succeeds, the quote is returned`() {
         assertThat(quoteRepositoryStub.findAll().valueOrThrow()).isEmpty()
 
-        val actual = quotes.execute(AddQuote(name = "Snarf", text = "Snarf snarf"))
+        val actual = quotes.execute(AddQuote(lines = listOf(Quote.Line(1, name = "Snarf", text = "Snarf snarf"))))
 
         val expectedQuote = quoteRepositoryStub.findAll().valueOrThrow().first()
 
