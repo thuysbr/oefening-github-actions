@@ -2,7 +2,7 @@ package be.kunlabora.crafters.kunlaquota.data
 
 import be.kunlabora.crafters.kunlaquota.AddQuoteFailed
 import be.kunlabora.crafters.kunlaquota.service.Either
-import be.kunlabora.crafters.kunlaquota.service.aDefaultQuote
+import be.kunlabora.crafters.kunlaquota.service.aSingleLineQuote
 import be.kunlabora.crafters.kunlaquota.service.domain.Quote
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteRepository
 import org.assertj.core.api.Assertions.assertThat
@@ -12,7 +12,7 @@ abstract class QuoteRepositoryContractTest(private val quoteRepository: QuoteRep
 
     @Test
     fun `can store quotes`() {
-        val aQuote = aDefaultQuote(name = "Joker", "Why so serious? :)")
+        val aQuote = aSingleLineQuote(name = "Joker", "Why so serious? :)")
 
         val storedQuote = quoteRepository.store(aQuote).valueOrThrow()
 
@@ -21,8 +21,8 @@ abstract class QuoteRepositoryContractTest(private val quoteRepository: QuoteRep
 
     @Test
     fun `can fetch quotes`() {
-        val quote1 = aDefaultQuote(name = "Joker", "Why so serious? :)").save()
-        val quote2 = aDefaultQuote(name = "Uncle Ben", "With great power comes great responsibility").save()
+        val quote1 = aSingleLineQuote(name = "Joker", "Why so serious? :)").save()
+        val quote2 = aSingleLineQuote(name = "Uncle Ben", "With great power comes great responsibility").save()
 
         val quotes = quoteRepository.findAll().valueOrThrow()
 
@@ -31,7 +31,7 @@ abstract class QuoteRepositoryContractTest(private val quoteRepository: QuoteRep
 
     @Test
     fun `storing an already existing quote shouldn't work`() {
-        val aStoredQuote = aDefaultQuote(name = "Joker", "Why so serious? :)").save()
+        val aStoredQuote = aSingleLineQuote(name = "Joker", "Why so serious? :)").save()
 
         val actual = quoteRepository.store(aStoredQuote)
 

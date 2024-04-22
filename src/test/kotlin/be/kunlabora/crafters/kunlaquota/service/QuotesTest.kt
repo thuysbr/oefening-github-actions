@@ -16,8 +16,8 @@ class QuotesTest {
 
     @Test
     fun `View all quotes`() {
-        val snarfsQuote = aDefaultQuote(name = "Snarf", text = "snarf snarf").save()
-        val lionosQuote = aDefaultQuote(name = "Lion-O", text = "stfu Snarf").save()
+        val snarfsQuote = aSingleLineQuote(name = "Snarf", text = "snarf snarf").save()
+        val lionosQuote = aSingleLineQuote(name = "Lion-O", text = "stfu Snarf").save()
 
         val actual = quotes.findAll().valueOrThrow()
 
@@ -29,7 +29,7 @@ class QuotesTest {
 
     @Test
     fun `View all quotes but there's something wrong with the db, a failure is returned`() {
-        aDefaultQuote(name = "Snarf", text = "snarf snarf").save()
+        aSingleLineQuote(name = "Snarf", text = "snarf snarf").save()
 
         quoteRepositoryStub.failOnNext(QuoteRepository::findAll.name, FetchQuotesFailed)
 
@@ -54,6 +54,24 @@ class QuotesTest {
         val actual = quotes.execute(AddQuote(lines = listOf(Quote.Line(1, name = "Snarf", text = "Snarf snarf"))))
 
         val expectedQuote = quoteRepositoryStub.findAll().valueOrThrow().first()
+
+        assertThat(actual).isEqualTo(Either.Right(expectedQuote))
+    }
+
+    @Test
+    fun `When adding a multiline quote succeeds, the quote is returned`() {
+        assertThat(quoteRepositoryStub.findAll().valueOrThrow()).isEmpty()
+
+        val actual = quotes.execute(AddQuote(lines = listOf(
+            Quote.Line(1, name = "Snarf", text = "Snarf snarf"),
+            Quote.Line(2, name = "Lion-O", text = "STFU Snarf"),
+        )))
+
+        val expectedId = quoteRepositoryStub.findAll().valueOrThrow().first().id
+        val expectedQuote = aMultiLineQuote(id = expectedId) {
+            "Snarf" said "Snarf snarf"
+            "Lion-O" said "STFU Snarf"
+        }
 
         assertThat(actual).isEqualTo(Either.Right(expectedQuote))
     }

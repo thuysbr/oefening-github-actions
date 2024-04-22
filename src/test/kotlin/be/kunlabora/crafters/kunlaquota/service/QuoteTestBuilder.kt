@@ -1,11 +1,26 @@
 package be.kunlabora.crafters.kunlaquota.service
 
 import be.kunlabora.crafters.kunlaquota.service.domain.Quote
+import be.kunlabora.crafters.kunlaquota.service.domain.QuoteId
 
-fun aDefaultQuote(
+fun aSingleLineQuote(
     name: String = "snarf",
     text: String = "snarf snarf",
 ) = Quote(
     id = EntityId.new(),
     lines = listOf(Quote.Line(1, name, text))
 )
+
+fun aMultiLineQuote(id: QuoteId = EntityId.new(), build: LineBuilder.() -> Unit): Quote {
+    return Quote(id = id, LineBuilder().apply(build).lines)
+}
+
+class LineBuilder {
+    private val linePairs: MutableList<Pair<String,String>> = mutableListOf()
+
+    val lines: List<Quote.Line> get() = linePairs.mapIndexed { idx, (name,text) -> Quote.Line(idx+1,name,text) }
+
+    infix fun String.said(text: String) {
+        linePairs += this to text
+    }
+}
