@@ -6,6 +6,16 @@ POST http://localhost:8080/api/quote
 Content-Type: application/json
 
 {
-  "name": "Snarf",
-  "text": "snarf snarf"
+  "lines": [
+    {
+      "order": 1,
+      "name": "Snarf",
+      "text": "snarf snarf"
+    },
+    {
+      "order": 2,
+      "name": "Lion-O",
+      "text": "stfu snarf"
+    }
+  ]
 }

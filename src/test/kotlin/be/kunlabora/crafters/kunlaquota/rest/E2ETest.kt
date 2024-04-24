@@ -4,7 +4,6 @@ import be.kunlabora.crafters.kunlaquota.TestKunlaquotaApplication
 import be.kunlabora.crafters.kunlaquota.service.domain.AddQuote
 import be.kunlabora.crafters.kunlaquota.service.domain.Quote
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -21,7 +20,6 @@ class E2ETest(
     @Autowired private val restTemplate: TestRestTemplate,
 ) {
 
-    @Disabled("failing until implemented in DBRepository")
     @Test
     fun `adding and fetching quotes`() {
         val lines = listOf(

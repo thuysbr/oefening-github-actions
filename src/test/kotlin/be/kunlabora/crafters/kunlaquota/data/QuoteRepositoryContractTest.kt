@@ -2,6 +2,7 @@ package be.kunlabora.crafters.kunlaquota.data
 
 import be.kunlabora.crafters.kunlaquota.AddQuoteFailed
 import be.kunlabora.crafters.kunlaquota.service.Either
+import be.kunlabora.crafters.kunlaquota.service.aMultiLineQuote
 import be.kunlabora.crafters.kunlaquota.service.aSingleLineQuote
 import be.kunlabora.crafters.kunlaquota.service.domain.Quote
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteRepository
@@ -13,6 +14,18 @@ abstract class QuoteRepositoryContractTest(private val quoteRepository: QuoteRep
     @Test
     fun `can store quotes`() {
         val aQuote = aSingleLineQuote(name = "Joker", "Why so serious? :)")
+
+        val storedQuote = quoteRepository.store(aQuote).valueOrThrow()
+
+        assertThat(storedQuote).isEqualTo(aQuote)
+    }
+
+    @Test
+    fun `can store multiline quotes`() {
+        val aQuote = aMultiLineQuote {
+            "Joker" said "Why so serious? :)"
+            "Batman" said "WHERE IS SHE?!"
+        }
 
         val storedQuote = quoteRepository.store(aQuote).valueOrThrow()
 
