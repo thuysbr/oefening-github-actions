@@ -1,6 +1,7 @@
 package be.kunlabora.crafters.kunlaquota.service.domain
 
-import be.kunlabora.crafters.kunlaquota.Failure
+import be.kunlabora.crafters.kunlaquota.AddFailure
+import be.kunlabora.crafters.kunlaquota.FetchQuotesFailed
 import be.kunlabora.crafters.kunlaquota.service.Command
 import be.kunlabora.crafters.kunlaquota.service.Either
 import be.kunlabora.crafters.kunlaquota.service.EntityId
@@ -23,6 +24,6 @@ data class Quote(
 }
 
 interface QuoteRepository {
-    fun store(quote: Quote): Either<Failure, Quote>
-    fun findAll(): Either<Failure, List<Quote>>
+    fun store(quote: Quote): Either<AddFailure, Quote>
+    fun findAll(): Either<FetchQuotesFailed, List<Quote>>
 }

@@ -1,10 +1,13 @@
 package be.kunlabora.crafters.kunlaquota.rest
 
+import be.kunlabora.crafters.kunlaquota.AddQuoteFailed
+import be.kunlabora.crafters.kunlaquota.AddQuoteInvalid
 import be.kunlabora.crafters.kunlaquota.Failure
 import be.kunlabora.crafters.kunlaquota.service.Either
 import be.kunlabora.crafters.kunlaquota.service.EntityId
 import be.kunlabora.crafters.kunlaquota.service.IQuotes
 import be.kunlabora.crafters.kunlaquota.service.domain.AddQuote
+import be.kunlabora.crafters.kunlaquota.service.get
 import org.slf4j.LoggerFactory
 import org.springframework.web.servlet.function.RouterFunctionDsl
 import org.springframework.web.servlet.function.ServerRequest
@@ -18,19 +21,28 @@ fun apiRoutes(quotes: IQuotes): RouterFunctionDsl.() -> Unit = {
     "/quote".nest {
         GET {
             quotes.findAll()
-                .handle { success ->
-                    ServerResponse.ok().body(success.value)
+                .map { foundQuotes ->
+                    ServerResponse.ok().body(foundQuotes)
                 }
+                .recover { failure ->
+                    ServerResponse.status(500).build().also { logger.error("${failure}") }
+                }.get()
+            }
         }
         POST { request ->
             request.body<AddQuote>()
                 .execute()
-                .handle { success ->
-                    ServerResponse.created(success.value.id.asUri(request)).build()
+                .map { quote ->
+                    ServerResponse.created(quote.id.asUri(request)).build()
                 }
+                .recover { failure ->
+                    when (failure) {
+                        is AddQuoteInvalid -> ServerResponse.status(400).body(AddQuoteError(failure.message)).also { logger.error(failure.message) }
+                        is AddQuoteFailed -> ServerResponse.status(500).build().also { logger.error(failure.message) }
+                    }
+                }.get()
         }
     }
-}
 
 private fun <T> Either<Failure, T>.handle(success: (Either.Right<T>) -> ServerResponse) =
     when (this) {

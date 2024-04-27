@@ -1,5 +1,6 @@
 package be.kunlabora.crafters.kunlaquota.data
 
+import be.kunlabora.crafters.kunlaquota.AddFailure
 import be.kunlabora.crafters.kunlaquota.AddQuoteFailed
 import be.kunlabora.crafters.kunlaquota.FetchQuotesFailed
 import be.kunlabora.crafters.kunlaquota.service.Either
@@ -22,16 +23,22 @@ class DBQuoteRepository(
      * JdbcAggregateTemplate required, because we decide in code when an entity gets a new EntityId
      * Using the DAO would delegate to an update method instead of an insert method ¯\_(ツ)_/¯
      */
-    override fun store(quote: Quote): Either<AddQuoteFailed, Quote> =
-        if (quoteDAO.existsById(quote.id.value)) Left(AddQuoteFailed("Quote already exists!"))
-        else Right(jdbcAggregateTemplate.insert(quote.toRecord()).toQuote())
+    override fun store(quote: Quote): Either<AddFailure, Quote> =
+        if (quoteDAO.existsById(quote.id.value)) Left(AddQuoteFailed("Quote already exists!")) as Either<AddFailure, Quote>
+        else Right(jdbcAggregateTemplate.insert(quote.toRecord()).toQuote()) as Either<AddFailure, Quote>
 
-    override fun findAll(): Either<FetchQuotesFailed, List<Quote>> =
-        Right(quoteDAO.findAll()
-            .map { quoteRecord -> quoteRecord.toQuote() })
+    override fun findAll(): Either<FetchQuotesFailed, List<Quote>> {
+        return try {
+            Right(quoteDAO.findAll()
+                .map { quoteRecord -> quoteRecord.toQuote() })
+        } catch (ex: Exception) {
+            Left(FetchQuotesFailed)
+        }
+    }
 
     private fun Quote.toRecord() =
         QuoteRecord(id.value, lines.map { it.toRecord() }.toSet())
+
     private fun Quote.Line.toRecord() =
         QuoteLineRecord(name, text)
 

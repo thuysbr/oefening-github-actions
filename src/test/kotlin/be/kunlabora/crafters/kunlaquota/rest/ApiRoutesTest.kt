@@ -1,7 +1,7 @@
 package be.kunlabora.crafters.kunlaquota.rest
 
+import be.kunlabora.crafters.kunlaquota.AddFailure
 import be.kunlabora.crafters.kunlaquota.AddQuoteFailed
-import be.kunlabora.crafters.kunlaquota.Failure
 import be.kunlabora.crafters.kunlaquota.FetchQuotesFailed
 import be.kunlabora.crafters.kunlaquota.service.Either
 import be.kunlabora.crafters.kunlaquota.service.IQuotes
@@ -29,11 +29,11 @@ class StubConfig {
     fun quotes(): IQuotes = FailingQuotesStub()
 
     class FailingQuotesStub: IQuotes {
-        override fun execute(addQuote: AddQuote): Either<Failure, Quote> {
+        override fun execute(addQuote: AddQuote): Either<AddFailure, Quote> {
             return Either.Left(AddQuoteFailed("💩"))
         }
 
-        override fun findAll(): Either<Failure, List<Quote>> {
+        override fun findAll(): Either<FetchQuotesFailed, List<Quote>> {
             return Either.Left(FetchQuotesFailed)
         }
     }
@@ -57,7 +57,7 @@ class ApiRoutesTest(
             status { isInternalServerError() }
         }
 
-        assertThat(capturedOutput.out).contains("AddQuoteFailed(message=💩)")
+        assertThat(capturedOutput.out).contains("💩")
     }
 
     @Test

@@ -1,5 +1,7 @@
 package be.kunlabora.crafters.kunlaquota.service
 
+import be.kunlabora.crafters.kunlaquota.service.Either.Left
+import be.kunlabora.crafters.kunlaquota.service.Either.Right
 import java.util.*
 
 @Suppress("unused")
@@ -30,8 +32,33 @@ sealed class Either<out F, out T> {
     data class Left<F>(val value: F) : Either<F, Nothing>()
     data class Right<T>(val value: T) : Either<Nothing, T>()
 
-    fun valueOrThrow() = when(this) {
+    fun valueOrThrow() = when (this) {
         is Left -> error("You expected a Right, but got a Left of ${this.value}")
         is Right -> this.value
     }
+
+    fun <R> map(block: (T) -> R): Either<F, R> =
+        when (this) {
+            is Left -> this
+            is Right -> Right(block(this.value))
+        }
+
+    fun <R> flatMap(block: (T) -> Either<@UnsafeVariance F,R>): Either<F, R> =
+        when (this) {
+            is Left -> this
+            is Right -> block(this.value)
+        }
+
+    fun recover(recovery: (F) -> @UnsafeVariance T): Either<T, T> =
+        when (this) {
+            is Left -> Right(recovery(this.value))
+            is Right -> this
+        }
 }
+
+
+fun <T> Either<T, T>.get(): T =
+    when (this) {
+        is Left -> this.value
+        is Right -> this.value
+    }
