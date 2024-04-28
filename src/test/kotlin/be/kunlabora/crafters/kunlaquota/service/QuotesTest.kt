@@ -4,15 +4,15 @@ import be.kunlabora.crafters.kunlaquota.AddQuoteFailed
 import be.kunlabora.crafters.kunlaquota.FetchQuotesFailed
 import be.kunlabora.crafters.kunlaquota.data.QuoteRepositoryStub
 import be.kunlabora.crafters.kunlaquota.service.Either.Left
-import be.kunlabora.crafters.kunlaquota.service.domain.AddQuote
 import be.kunlabora.crafters.kunlaquota.service.domain.Quote
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteRepository
+import be.kunlabora.crafters.kunlaquota.service.domain.QuoteShare
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class QuotesTest {
     private val quoteRepositoryStub = QuoteRepositoryStub()
-    private val quotes = Quotes(quoteRepository = quoteRepositoryStub)
+    private val quotes = Quotes(quoteRepository = quoteRepositoryStub, quoteShareProvider = { QuoteShare("fixed") })
 
     @Test
     fun `View all quotes`() {

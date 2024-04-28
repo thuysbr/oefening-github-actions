@@ -1,24 +1,46 @@
 package be.kunlabora.crafters.kunlaquota.rest
 
 import be.kunlabora.crafters.kunlaquota.TestKunlaquotaApplication
-import be.kunlabora.crafters.kunlaquota.service.domain.AddQuote
+import be.kunlabora.crafters.kunlaquota.service.AddQuote
+import be.kunlabora.crafters.kunlaquota.service.ShareQuote
 import be.kunlabora.crafters.kunlaquota.service.domain.Quote
+import be.kunlabora.crafters.kunlaquota.service.domain.QuoteId
+import be.kunlabora.crafters.kunlaquota.service.domain.QuoteShare
+import be.kunlabora.crafters.kunlaquota.service.domain.QuoteShareProvider
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.boot.test.web.client.exchange
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Primary
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.jdbc.core.JdbcOperations
 import org.springframework.test.jdbc.JdbcTestUtils
+import java.net.URI
+
+object DummyQuoteShareProvider : QuoteShareProvider {
+    override operator fun invoke(quoteId: QuoteId)  = QuoteShare("fixed")
+}
+
+@TestConfiguration
+class ShareProviderConfig {
+    @Bean
+    @Primary
+    fun dummyQuoteShareProvider() : QuoteShareProvider = DummyQuoteShareProvider
+}
 
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    classes = [TestKunlaquotaApplication::class]
+    classes = [
+        ShareProviderConfig::class,
+        TestKunlaquotaApplication::class,
+    ]
 )
 class E2ETest(
     @Autowired private val restTemplate: TestRestTemplate,
@@ -42,7 +64,7 @@ class E2ETest(
 
         val response = restTemplate.exchange<List<Quote>>("/api/quote", HttpMethod.GET)
 
-        assertThat(response.body?.map { it.id.value }).containsExactly(newLocation.path.substringAfterLast('/'))
+        assertThat(response.body?.map { it.id.value }).containsExactly(newLocation.lastSegment())
         assertThat(response.body?.first()?.lines).containsExactlyElementsOf(lines)
     }
 
@@ -60,4 +82,22 @@ class E2ETest(
         val response = restTemplate.exchange<List<Quote>>("/api/quote", HttpMethod.GET)
         assertThat(response.body?.toList()).isEmpty()
     }
+
+    @Test
+    fun `a quote can be shared with an easily shareable http link`() {
+        val lines = listOf(
+            Quote.Line(1, "Lion-o", "STFU Snarf!"),
+            Quote.Line(2, "Snarf", "schnarf schnarrrff"),
+        )
+        val addQuote = AddQuote(lines)
+        val newLocation = restTemplate.postForLocation("/api/quote", addQuote)
+        assertThat(newLocation.path).isNotEmpty()
+
+        println("Posting to $newLocation")
+        val sharedLocation = restTemplate.postForLocation(newLocation, ShareQuote(QuoteId.fromString(newLocation.lastSegment())))
+        assertThat(sharedLocation.lastSegment()).isEqualTo("fixed")
+    }
 }
+
+fun URI.append(path: String): URI = this.resolve(this.lastSegment()+"/").resolve(path)
+fun URI.lastSegment() = path.substringAfterLast('/')

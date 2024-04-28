@@ -1,12 +1,12 @@
 package be.kunlabora.crafters.kunlaquota.rest
 
-import be.kunlabora.crafters.kunlaquota.AddFailure
-import be.kunlabora.crafters.kunlaquota.AddQuoteFailed
-import be.kunlabora.crafters.kunlaquota.FetchQuotesFailed
+import be.kunlabora.crafters.kunlaquota.*
+import be.kunlabora.crafters.kunlaquota.service.AddQuote
 import be.kunlabora.crafters.kunlaquota.service.Either
 import be.kunlabora.crafters.kunlaquota.service.IQuotes
-import be.kunlabora.crafters.kunlaquota.service.domain.AddQuote
+import be.kunlabora.crafters.kunlaquota.service.ShareQuote
 import be.kunlabora.crafters.kunlaquota.service.domain.Quote
+import be.kunlabora.crafters.kunlaquota.service.domain.QuoteShare
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -31,6 +31,10 @@ class StubConfig {
     class FailingQuotesStub: IQuotes {
         override fun execute(addQuote: AddQuote): Either<AddFailure, Quote> {
             return Either.Left(AddQuoteFailed("💩"))
+        }
+
+        override fun execute(shareQuote: ShareQuote): Either<ShareFailure, QuoteShare> {
+            return Either.Left(ShareQuoteFailed)
         }
 
         override fun findAll(): Either<FetchQuotesFailed, List<Quote>> {

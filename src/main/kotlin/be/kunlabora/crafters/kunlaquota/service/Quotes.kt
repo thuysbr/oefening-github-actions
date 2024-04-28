@@ -3,20 +3,20 @@ package be.kunlabora.crafters.kunlaquota.service
 import be.kunlabora.crafters.kunlaquota.AddFailure
 import be.kunlabora.crafters.kunlaquota.AddQuoteInvalid
 import be.kunlabora.crafters.kunlaquota.FetchQuotesFailed
+import be.kunlabora.crafters.kunlaquota.ShareFailure
 import be.kunlabora.crafters.kunlaquota.service.Either.Left
 import be.kunlabora.crafters.kunlaquota.service.Either.Right
-import be.kunlabora.crafters.kunlaquota.service.domain.AddQuote
-import be.kunlabora.crafters.kunlaquota.service.domain.Quote
-import be.kunlabora.crafters.kunlaquota.service.domain.QuoteId
-import be.kunlabora.crafters.kunlaquota.service.domain.QuoteRepository
+import be.kunlabora.crafters.kunlaquota.service.domain.*
 
 interface IQuotes {
     fun execute(addQuote: AddQuote): Either<AddFailure, Quote>
+    fun execute(shareQuote: ShareQuote): Either<ShareFailure, QuoteShare>
     fun findAll(): Either<FetchQuotesFailed, List<Quote>>
 }
 
 class Quotes(
     private val quoteRepository: QuoteRepository,
+    private val quoteShareProvider: QuoteShareProvider,
 ) : IQuotes {
     override fun execute(addQuote: AddQuote): Either<AddFailure, Quote> =
         addQuote
@@ -25,6 +25,10 @@ class Quotes(
                 Quote(QuoteId.new(), validatedAddQuote.lines)
                     .store()
             }
+
+    override fun execute(shareQuote: ShareQuote): Either<ShareFailure, QuoteShare> {
+        return Right(quoteShareProvider(shareQuote.id))
+    }
 
 
     private fun Quote.store() = quoteRepository.store(this)

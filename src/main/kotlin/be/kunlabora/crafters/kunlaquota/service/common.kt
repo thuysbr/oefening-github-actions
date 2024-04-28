@@ -2,6 +2,9 @@ package be.kunlabora.crafters.kunlaquota.service
 
 import be.kunlabora.crafters.kunlaquota.service.Either.Left
 import be.kunlabora.crafters.kunlaquota.service.Either.Right
+import be.kunlabora.crafters.kunlaquota.service.domain.Quote
+import be.kunlabora.crafters.kunlaquota.service.domain.QuoteId
+import com.fasterxml.jackson.annotation.JsonTypeInfo
 import java.util.*
 
 @Suppress("unused")
@@ -26,7 +29,10 @@ class EntityId<E> private constructor(val value: String) {
 }
 
 //marker interface
-interface Command
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME)
+sealed interface Command
+data class AddQuote(val lines: List<Quote.Line>): Command
+data class ShareQuote(val id: QuoteId): Command
 
 sealed class Either<out F, out T> {
     data class Left<F>(val value: F) : Either<F, Nothing>()
