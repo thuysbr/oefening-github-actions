@@ -5,6 +5,7 @@ import be.kunlabora.crafters.kunlaquota.service.Either
 import be.kunlabora.crafters.kunlaquota.service.aMultiLineQuote
 import be.kunlabora.crafters.kunlaquota.service.aSingleLineQuote
 import be.kunlabora.crafters.kunlaquota.service.domain.Quote
+import be.kunlabora.crafters.kunlaquota.service.domain.QuoteId
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -50,6 +51,31 @@ abstract class QuoteRepositoryContractTest(private val quoteRepository: QuoteRep
 
         assertThat(actual).isEqualTo(Either.Left(AddQuoteFailed("Quote already exists!")))
     }
+
+    @Test
+    fun `adding a multiline quote which has 2 lines that are exactly the same, should work`() {
+        val lines = listOf(
+            Quote.Line(1, "Lion-o", "STFU Snarf!"),
+            Quote.Line(2, "Lion-o", "STFU Snarf!"),
+        )
+        val expect = Quote(QuoteId.new(), lines)
+        val actual = quoteRepository.store(expect).valueOrThrow()
+
+        assertThat(actual).isEqualTo(expect)
+    }
+
+    @Test
+    fun `adding a multiline quote that has different order numbers than an index, should work`() {
+        val lines = listOf(
+            Quote.Line(3, "Lion-o", "STFU Snarf!"),
+            Quote.Line(4, "Lion-o", "STFU Snarf!"),
+        )
+        val expect = Quote(QuoteId.new(), lines)
+        val actual = quoteRepository.store(expect).valueOrThrow()
+
+        assertThat(actual).isEqualTo(expect)
+    }
+
 
     private fun Quote.save() : Quote = quoteRepository.store(this).valueOrThrow()
 }

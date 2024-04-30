@@ -40,13 +40,13 @@ class DBQuoteRepository(
         QuoteRecord(id.value, lines.map { it.toRecord() }.toSet())
 
     private fun Quote.Line.toRecord() =
-        QuoteLineRecord(name, text)
+        QuoteLineRecord(order, name, text)
 
     private fun QuoteRecord.toQuote() =
-        Quote(QuoteId.fromString(id), lines = lines.mapIndexed { idx, line -> line.toQuoteLine(idx) })
+        Quote(QuoteId.fromString(id), lines = lines.map { line -> line.toQuoteLine() })
 
-    private fun QuoteLineRecord.toQuoteLine(index: Int) =
-        Quote.Line(index + 1, name, text)
+    private fun QuoteLineRecord.toQuoteLine() =
+        Quote.Line(order, name, text)
 
 }
 
@@ -59,6 +59,7 @@ data class QuoteRecord(
 
 @Table("quote_lines")
 data class QuoteLineRecord(
+    val order: Int,
     val name: String,
     val text: String,
 )

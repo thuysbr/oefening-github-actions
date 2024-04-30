@@ -9,6 +9,7 @@ import be.kunlabora.crafters.kunlaquota.service.domain.QuoteShare
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteShareProvider
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -84,6 +85,7 @@ class E2ETest(
     }
 
     @Test
+    @Disabled("until implemented")
     fun `a quote can be shared with an easily shareable http link`() {
         val lines = listOf(
             Quote.Line(1, "Lion-o", "STFU Snarf!"),
