@@ -2,7 +2,6 @@ package be.kunlabora.crafters.kunlaquota.rest
 
 import be.kunlabora.crafters.kunlaquota.AddQuoteFailed
 import be.kunlabora.crafters.kunlaquota.AddQuoteInvalid
-import be.kunlabora.crafters.kunlaquota.Failure
 import be.kunlabora.crafters.kunlaquota.ShareQuoteFailed
 import be.kunlabora.crafters.kunlaquota.service.*
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteShare
@@ -24,7 +23,7 @@ fun apiRoutes(quotes: IQuotes): RouterFunctionDsl.() -> Unit = {
                     ServerResponse.ok().body(foundQuotes)
                 }
                 .recover { failure ->
-                    ServerResponse.status(500).build().also { logger.error("${failure}") }
+                    ServerResponse.status(500).build().also { logger.error("$failure") }
                 }.get()
         }
         POST("") { request ->
@@ -56,12 +55,6 @@ fun apiRoutes(quotes: IQuotes): RouterFunctionDsl.() -> Unit = {
         }
     }
 }
-
-private fun <T> Either<Failure, T>.handle(success: (Either.Right<T>) -> ServerResponse) =
-    when (this) {
-        is Either.Left -> ServerResponse.status(500).build().also { logger.error("$value") }
-        is Either.Right -> success(this)
-    }
 
 private val logger = LoggerFactory.getLogger("KunlaQuotaLogger")
 

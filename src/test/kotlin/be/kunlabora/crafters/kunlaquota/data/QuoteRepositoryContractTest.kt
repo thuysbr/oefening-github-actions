@@ -13,7 +13,7 @@ abstract class QuoteRepositoryContractTest(private val quoteRepository: QuoteRep
 
     @Test
     fun `can store quotes`() {
-        val aQuote = aSingleLineQuote(name = "Joker", "Why so serious? :)")
+        val aQuote = aSingleLineQuote(name = "Jonesuuu", "When I kotlin, I kotlin. When I java, I java. But when I javascript.. I die a little on the inside.")
 
         val storedQuote = quoteRepository.store(aQuote).valueOrThrow()
 

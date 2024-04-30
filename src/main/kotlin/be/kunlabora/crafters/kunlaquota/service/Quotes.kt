@@ -22,8 +22,7 @@ class Quotes(
         addQuote
             .validate()
             .flatMap { validatedAddQuote ->
-                Quote(QuoteId.new(), validatedAddQuote.lines)
-                    .store()
+                Quote(QuoteId.new(), validatedAddQuote.lines).store()
             }
 
     override fun execute(shareQuote: ShareQuote): Either<ShareFailure, QuoteShare> {
