@@ -17,6 +17,7 @@ Find the stream [over here on Twitch](https://twitch.tv/livecodingwithsch3lp).
 ### Before
 * [ ] Figure out royalty-free music again
 * [ ] Set up the Just Chatting scene
+* [ ] Set up the visual stream chat
 * [ ] Set up a bot again to react to !socials, !discord, etc.
 * [ ] Set up a bot again to block/ban spammers
 * [ ] Do I want to save a local copy again to post to YouTube?
