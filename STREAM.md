@@ -21,7 +21,7 @@ Find the stream [over here on Twitch](https://twitch.tv/livecodingwithsch3lp).
 * [ ] Set up a bot again to react to !socials, !discord, etc.
 * [ ] Set up a bot again to block/ban spammers
 * [ ] Do I want to save a local copy again to post to YouTube?
-* [ ] Make github repo public + add README.md and LICENSE
+* [x] Make github repo public + add README.md and LICENSE
 
 ### Just Before/During
 * [ ] Configure StreamLabs' category to Creative 
