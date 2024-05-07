@@ -6,6 +6,7 @@ POST http://localhost:8080/api/quote
 Content-Type: application/json
 
 {
+  "@type": "AddQuote",
   "lines": [
     {
       "order": 1,
