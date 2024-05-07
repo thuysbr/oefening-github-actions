@@ -20,17 +20,34 @@ class QuotesTest {
 
     @Test
     fun `View all quotes`() {
-        val oldestDate = LocalDateTime.now()
-        val snarfsQuote = aSingleLineQuote(at = oldestDate, name = "Snarf", text = "snarf snarf").save()
+        val oldestDate: LocalDateTime = LocalDateTime.now()
+        val oldestQuote: Quote = aSingleLineQuote(at = oldestDate, name = "Snarf", text = "snarf snarf").save()
 
         val newerDate = oldestDate.plusSeconds(1)
-        val lionosQuote = aSingleLineQuote(at = newerDate, name = "Lion-O", text = "stfu Snarf").save()
+        val newerQuote = aSingleLineQuote(at = newerDate, name = "Lion-O", text = "stfu Snarf").save()
 
         val actual = quotes.findAll().valueOrThrow()
 
         assertThat(actual).containsExactly(
-            lionosQuote,
-            snarfsQuote,
+            newerQuote,
+            oldestQuote,
+        )
+    }
+
+    @Test
+    fun `View all quotes - different style of given when then`() {
+        val (oldestQuote, newestQuote) = LocalDateTime.now().let {
+            Pair(
+                aSingleLineQuote(at = it, name = "Snarf", text = "snarf snarf").save(),
+                aSingleLineQuote(at = it.plusSeconds(1), name = "Lion-O", text = "stfu Snarf").save()
+            )
+        }
+
+        val actual = quotes.findAll().valueOrThrow()
+
+        assertThat(actual).containsExactly(
+            newestQuote,
+            oldestQuote,
         )
     }
 
@@ -70,10 +87,12 @@ class QuotesTest {
         assertThat(quoteRepositoryFake.findAll().valueOrThrow()).isEmpty()
         val now = LocalDateTime.of(2024, 5, 4, 1, 2, 3)
 
-        val actual = quotes.execute(AddQuote(lines = listOf(
-            Quote.Line(1, name = "Snarf", text = "Snarf snarf"),
-            Quote.Line(2, name = "Lion-O", text = "STFU Snarf"),
-        )), dateProvider = { now })
+        val actual = quotes.execute(AddQuote(
+            lines = listOf(
+                Quote.Line(1, name = "Snarf", text = "Snarf snarf"),
+                Quote.Line(2, name = "Lion-O", text = "STFU Snarf"),
+            )
+        ), dateProvider = { now })
 
         val expectedId = quoteRepositoryFake.findAll().valueOrThrow().first().id
         val expectedQuote = aMultiLineQuote(id = expectedId, at = now) {
