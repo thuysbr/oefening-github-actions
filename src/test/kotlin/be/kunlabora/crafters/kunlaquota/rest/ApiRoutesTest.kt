@@ -2,8 +2,8 @@ package be.kunlabora.crafters.kunlaquota.rest
 
 import be.kunlabora.crafters.kunlaquota.*
 import be.kunlabora.crafters.kunlaquota.service.AddQuote
-import be.kunlabora.crafters.kunlaquota.service.Either
 import be.kunlabora.crafters.kunlaquota.service.IQuotes
+import be.kunlabora.crafters.kunlaquota.service.Result
 import be.kunlabora.crafters.kunlaquota.service.ShareQuote
 import be.kunlabora.crafters.kunlaquota.service.domain.Quote
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteShare
@@ -30,16 +30,16 @@ class StubConfig {
     fun quotes(): IQuotes = FailingQuotesStub()
 
     class FailingQuotesStub: IQuotes {
-        override fun execute(addQuote: AddQuote, dateProvider: () -> LocalDateTime): Either<AddFailure, Quote> {
-            return Either.Left(AddQuoteFailed("💩"))
+        override fun execute(addQuote: AddQuote, dateProvider: () -> LocalDateTime): Result<AddFailure, Quote> {
+            return Result.Error(AddQuoteFailed("💩"))
         }
 
-        override fun execute(shareQuote: ShareQuote): Either<ShareFailure, QuoteShare> {
-            return Either.Left(ShareQuoteFailed)
+        override fun execute(shareQuote: ShareQuote): Result<ShareFailure, QuoteShare> {
+            return Result.Error(ShareQuoteFailed)
         }
 
-        override fun findAll(): Either<FetchQuotesFailed, List<Quote>> {
-            return Either.Left(FetchQuotesFailed)
+        override fun findAll(): Result<FetchQuotesFailed, List<Quote>> {
+            return Result.Error(FetchQuotesFailed)
         }
     }
 }

@@ -6,8 +6,8 @@ Find the stream [over here on Twitch](https://twitch.tv/livecodingwithsch3lp).
 ## TODOs
 
 * [x] Also save the date at which a Quote was posted
+* [x] Rename Either to Result/Ok/Error
 * [ ] Maybe rename Stub to Fake
-* [ ] Rename Either to Result/Ok/Error
 * [ ] And make sure they're ordered newest first
 
 ## Quotes

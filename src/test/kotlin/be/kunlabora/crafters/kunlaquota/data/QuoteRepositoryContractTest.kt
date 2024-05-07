@@ -1,7 +1,7 @@
 package be.kunlabora.crafters.kunlaquota.data
 
 import be.kunlabora.crafters.kunlaquota.AddQuoteFailed
-import be.kunlabora.crafters.kunlaquota.service.Either
+import be.kunlabora.crafters.kunlaquota.service.Result
 import be.kunlabora.crafters.kunlaquota.service.aMultiLineQuote
 import be.kunlabora.crafters.kunlaquota.service.aSingleLineQuote
 import be.kunlabora.crafters.kunlaquota.service.domain.Quote
@@ -49,7 +49,7 @@ abstract class QuoteRepositoryContractTest(private val quoteRepository: QuoteRep
 
         val actual = quoteRepository.store(aStoredQuote)
 
-        assertThat(actual).isEqualTo(Either.Left(AddQuoteFailed("Quote already exists!")))
+        assertThat(actual).isEqualTo(Result.Error(AddQuoteFailed("Quote already exists!")))
     }
 
     @Test

@@ -3,7 +3,7 @@ package be.kunlabora.crafters.kunlaquota.service
 import be.kunlabora.crafters.kunlaquota.AddQuoteFailed
 import be.kunlabora.crafters.kunlaquota.FetchQuotesFailed
 import be.kunlabora.crafters.kunlaquota.data.QuoteRepositoryStub
-import be.kunlabora.crafters.kunlaquota.service.Either.Left
+import be.kunlabora.crafters.kunlaquota.service.Result.Error
 import be.kunlabora.crafters.kunlaquota.service.domain.Quote
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteRepository
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteShare
@@ -39,7 +39,7 @@ class QuotesTest {
 
         val actual = quotes.findAll()
 
-        assertThat(actual).isEqualTo(Left(FetchQuotesFailed))
+        assertThat(actual).isEqualTo(Error(FetchQuotesFailed))
     }
 
     @Test
@@ -48,7 +48,7 @@ class QuotesTest {
 
         val actual = quotes.execute(AddQuote(lines = listOf(Quote.Line(1, name = "Snarf", text = "Snarf snarf"))))
 
-        assertThat(actual).isEqualTo(Left(AddQuoteFailed("💩")))
+        assertThat(actual).isEqualTo(Error(AddQuoteFailed("💩")))
     }
 
     @Test
@@ -59,7 +59,7 @@ class QuotesTest {
 
         val expectedQuote = quoteRepositoryStub.findAll().valueOrThrow().first()
 
-        assertThat(actual).isEqualTo(Either.Right(expectedQuote))
+        assertThat(actual).isEqualTo(Result.Ok(expectedQuote))
     }
 
     @Test
@@ -78,7 +78,7 @@ class QuotesTest {
             "Lion-O" said "STFU Snarf"
         }
 
-        assertThat(actual).isEqualTo(Either.Right(expectedQuote))
+        assertThat(actual).isEqualTo(Result.Ok(expectedQuote))
     }
 
     private fun Quote.save() =
