@@ -5,8 +5,9 @@ Find the stream [over here on Twitch](https://twitch.tv/livecodingwithsch3lp).
 
 ## TODOs
 
+* [x] Also save the date at which a Quote was posted
 * [ ] Maybe rename Stub to Fake
-* [ ] Also save the date at which a Quote was posted
+* [ ] Rename Either to Result/Ok/Error
 * [ ] And make sure they're ordered newest first
 
 ## Quotes
@@ -15,7 +16,7 @@ Find the stream [over here on Twitch](https://twitch.tv/livecodingwithsch3lp).
 
 ## Improvements for next time
 ### Before
-* [ ] Figure out royalty-free music again
+* [x] Figure out royalty-free music again
 * [x] Set up the Just Chatting scene
 * [x] Set up the visual stream chat
 * [ ] Set up a bot again to react to !socials, !discord, etc.
@@ -24,6 +25,6 @@ Find the stream [over here on Twitch](https://twitch.tv/livecodingwithsch3lp).
 * [x] Make github repo public + add README.md and LICENSE
 
 ### Just Before/During
-* [ ] Configure StreamLabs' category to Creative 
-* [ ] Make sure to talk in the mic in one direction
-* [ ] Let the dog inside before starting the stream
+* [x] Configure StreamLabs' category to Creative 
+* [x] Make sure to talk in the mic in one direction
+* [x] Let the dog inside before starting the stream

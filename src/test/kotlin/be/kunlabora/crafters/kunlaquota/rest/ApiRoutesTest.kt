@@ -22,6 +22,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
+import java.time.LocalDateTime
 
 @TestConfiguration
 class StubConfig {
@@ -29,7 +30,7 @@ class StubConfig {
     fun quotes(): IQuotes = FailingQuotesStub()
 
     class FailingQuotesStub: IQuotes {
-        override fun execute(addQuote: AddQuote): Either<AddFailure, Quote> {
+        override fun execute(addQuote: AddQuote, dateProvider: () -> LocalDateTime): Either<AddFailure, Quote> {
             return Either.Left(AddQuoteFailed("💩"))
         }
 

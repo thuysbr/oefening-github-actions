@@ -7,9 +7,10 @@ import be.kunlabora.crafters.kunlaquota.ShareFailure
 import be.kunlabora.crafters.kunlaquota.service.Either.Left
 import be.kunlabora.crafters.kunlaquota.service.Either.Right
 import be.kunlabora.crafters.kunlaquota.service.domain.*
+import java.time.LocalDateTime
 
 interface IQuotes {
-    fun execute(addQuote: AddQuote): Either<AddFailure, Quote>
+    fun execute(addQuote: AddQuote, dateProvider: () -> LocalDateTime = { LocalDateTime.now() }): Either<AddFailure, Quote>
     fun execute(shareQuote: ShareQuote): Either<ShareFailure, QuoteShare>
     fun findAll(): Either<FetchQuotesFailed, List<Quote>>
 }
@@ -18,11 +19,11 @@ class Quotes(
     private val quoteRepository: QuoteRepository,
     private val quoteShareProvider: QuoteShareProvider,
 ) : IQuotes {
-    override fun execute(addQuote: AddQuote): Either<AddFailure, Quote> =
+    override fun execute(addQuote: AddQuote, dateProvider : () -> LocalDateTime): Either<AddFailure, Quote> =
         addQuote
             .validate()
             .flatMap { validatedAddQuote ->
-                Quote(QuoteId.new(), validatedAddQuote.lines).store()
+                Quote(id = QuoteId.new(), at = dateProvider(), lines = validatedAddQuote.lines).store()
             }
 
     override fun execute(shareQuote: ShareQuote): Either<ShareFailure, QuoteShare> {

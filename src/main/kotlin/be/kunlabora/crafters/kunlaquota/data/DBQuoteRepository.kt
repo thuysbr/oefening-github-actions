@@ -13,6 +13,7 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate
 import org.springframework.data.relational.core.mapping.Table
 import org.springframework.data.repository.CrudRepository
+import java.time.LocalDateTime
 
 class DBQuoteRepository(
     private val jdbcAggregateTemplate: JdbcAggregateTemplate,
@@ -37,13 +38,13 @@ class DBQuoteRepository(
     }
 
     private fun Quote.toRecord() =
-        QuoteRecord(id.value, lines.map { it.toRecord() }.toSet())
+        QuoteRecord(id = id.value, at = at, lines = lines.map { it.toRecord() }.toSet())
 
     private fun Quote.Line.toRecord() =
         QuoteLineRecord(order, name, text)
 
     private fun QuoteRecord.toQuote() =
-        Quote(QuoteId.fromString(id), lines = lines.map { line -> line.toQuoteLine() })
+        Quote(id = QuoteId.fromString(id), at = at, lines = lines.map { line -> line.toQuoteLine() })
 
     private fun QuoteLineRecord.toQuoteLine() =
         Quote.Line(order, name, text)
@@ -54,6 +55,7 @@ class DBQuoteRepository(
 data class QuoteRecord(
     @Id
     val id: String,
+    val at: LocalDateTime,
     val lines: Set<QuoteLineRecord>,
 )
 

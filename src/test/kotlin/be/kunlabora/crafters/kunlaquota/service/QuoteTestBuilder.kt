@@ -2,6 +2,7 @@ package be.kunlabora.crafters.kunlaquota.service
 
 import be.kunlabora.crafters.kunlaquota.service.domain.Quote
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteId
+import java.time.LocalDateTime
 
 fun aSingleLineQuote(
     name: String = "snarf",
@@ -11,8 +12,8 @@ fun aSingleLineQuote(
     lines = listOf(Quote.Line(1, name, text))
 )
 
-fun aMultiLineQuote(id: QuoteId = EntityId.new(), build: LineBuilder.() -> Unit): Quote {
-    return Quote(id = id, LineBuilder().apply(build).lines)
+fun aMultiLineQuote(id: QuoteId = EntityId.new(), at: LocalDateTime = LocalDateTime.now(), build: LineBuilder.() -> Unit): Quote {
+    return Quote(id = id, at = at, lines = LineBuilder().apply(build).lines)
 }
 
 class LineBuilder {

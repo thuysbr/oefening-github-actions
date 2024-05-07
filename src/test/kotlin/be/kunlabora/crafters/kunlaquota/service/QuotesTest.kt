@@ -9,10 +9,14 @@ import be.kunlabora.crafters.kunlaquota.service.domain.QuoteRepository
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteShare
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import java.time.LocalDateTime
 
 class QuotesTest {
     private val quoteRepositoryStub = QuoteRepositoryStub()
-    private val quotes = Quotes(quoteRepository = quoteRepositoryStub, quoteShareProvider = { QuoteShare("fixed") })
+    private val quotes = Quotes(
+        quoteRepository = quoteRepositoryStub,
+        quoteShareProvider = { QuoteShare("fixed") }
+    )
 
     @Test
     fun `View all quotes`() {
@@ -61,14 +65,15 @@ class QuotesTest {
     @Test
     fun `When adding a multiline quote succeeds, the quote is returned`() {
         assertThat(quoteRepositoryStub.findAll().valueOrThrow()).isEmpty()
+        val now = LocalDateTime.of(2024, 5, 4, 1, 2, 3)
 
         val actual = quotes.execute(AddQuote(lines = listOf(
             Quote.Line(1, name = "Snarf", text = "Snarf snarf"),
             Quote.Line(2, name = "Lion-O", text = "STFU Snarf"),
-        )))
+        )), dateProvider = { now })
 
         val expectedId = quoteRepositoryStub.findAll().valueOrThrow().first().id
-        val expectedQuote = aMultiLineQuote(id = expectedId) {
+        val expectedQuote = aMultiLineQuote(id = expectedId, at = now) {
             "Snarf" said "Snarf snarf"
             "Lion-O" said "STFU Snarf"
         }
