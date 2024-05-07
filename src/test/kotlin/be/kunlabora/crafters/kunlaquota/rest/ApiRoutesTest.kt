@@ -25,11 +25,11 @@ import org.springframework.test.web.servlet.post
 import java.time.LocalDateTime
 
 @TestConfiguration
-class StubConfig {
+class FakeConfig {
     @Bean
-    fun quotes(): IQuotes = FailingQuotesStub()
+    fun quotes(): IQuotes = FailingQuotesFake()
 
-    class FailingQuotesStub: IQuotes {
+    class FailingQuotesFake: IQuotes {
         override fun execute(addQuote: AddQuote, dateProvider: () -> LocalDateTime): Result<AddFailure, Quote> {
             return Result.Error(AddQuoteFailed("💩"))
         }
@@ -46,7 +46,7 @@ class StubConfig {
 
 
 @WebMvcTest(WebConfig::class)
-@ContextConfiguration(classes = [StubConfig::class])
+@ContextConfiguration(classes = [FakeConfig::class])
 @ExtendWith(OutputCaptureExtension::class)
 class ApiRoutesTest(
     @Autowired private val mockMvc: MockMvc,

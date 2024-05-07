@@ -7,7 +7,7 @@ Find the stream [over here on Twitch](https://twitch.tv/livecodingwithsch3lp).
 
 * [x] Also save the date at which a Quote was posted
 * [x] Rename Either to Result/Ok/Error
-* [ ] Maybe rename Stub to Fake
+* [x] Maybe rename Stub to Fake
 * [ ] And make sure they're ordered newest first
 
 ## Quotes
