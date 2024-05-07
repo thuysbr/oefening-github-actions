@@ -14,8 +14,12 @@ class QuoteRepositoryFake(
     private val backingList: MutableList<Quote> = mutableListOf()
 
     override fun store(quote: Quote): Result<AddFailure, Quote> = orFail(QuoteRepository::store.name) {
-        if (quote.id in backingList.map { it.id }) Error(AddQuoteFailed("Quote already exists!"))
-        else Ok(quote).also { backingList.add(quote) }
+        if (quote.id in backingList.map { it.id }) {
+            Error(AddQuoteFailed("Quote already exists!"))
+        } else {
+            backingList.add(quote)
+            Ok(quote)
+        }
     } as Result<AddFailure, Quote>
 
     override fun findAll() : Result<FetchQuotesFailed, List<Quote>> = orFail(QuoteRepository::findAll.name) {
