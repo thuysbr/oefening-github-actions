@@ -20,14 +20,17 @@ class QuotesTest {
 
     @Test
     fun `View all quotes`() {
-        val snarfsQuote = aSingleLineQuote(name = "Snarf", text = "snarf snarf").save()
-        val lionosQuote = aSingleLineQuote(name = "Lion-O", text = "stfu Snarf").save()
+        val oldestDate = LocalDateTime.now()
+        val snarfsQuote = aSingleLineQuote(at = oldestDate, name = "Snarf", text = "snarf snarf").save()
+
+        val newerDate = oldestDate.plusSeconds(1)
+        val lionosQuote = aSingleLineQuote(at = newerDate, name = "Lion-O", text = "stfu Snarf").save()
 
         val actual = quotes.findAll().valueOrThrow()
 
-        assertThat(actual).containsExactlyInAnyOrder(
-            snarfsQuote,
+        assertThat(actual).containsExactly(
             lionosQuote,
+            snarfsQuote,
         )
     }
 

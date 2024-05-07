@@ -11,8 +11,10 @@ import be.kunlabora.crafters.kunlaquota.service.domain.QuoteId
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteRepository
 import org.springframework.data.annotation.Id
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate
+import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.data.relational.core.mapping.Table
 import org.springframework.data.repository.CrudRepository
+import org.springframework.data.repository.PagingAndSortingRepository
 import java.time.LocalDateTime
 
 class DBQuoteRepository(
@@ -28,14 +30,12 @@ class DBQuoteRepository(
         if (quoteDAO.existsById(quote.id.value)) Error(AddQuoteFailed("Quote already exists!"))
         else Ok(jdbcAggregateTemplate.insert(quote.toRecord()).toQuote())
 
-    override fun findAll(): Result<FetchQuotesFailed, List<Quote>> {
-        return try {
-            Ok(quoteDAO.findAll()
-                .map { quoteRecord -> quoteRecord.toQuote() })
+    override fun findAll(): Result<FetchQuotesFailed, List<Quote>> =
+        try {
+            Ok(quoteDAO.findAllSortedDesc().map { quoteRecord -> quoteRecord.toQuote() })
         } catch (ex: Exception) {
             Error(FetchQuotesFailed)
         }
-    }
 
     private fun Quote.toRecord() =
         QuoteRecord(id = id.value, at = at, lines = lines.map { it.toRecord() }.toSet())
@@ -66,4 +66,8 @@ data class QuoteLineRecord(
     val text: String,
 )
 
-interface QuoteDAO : CrudRepository<QuoteRecord, String>
+interface QuoteDAO : CrudRepository<QuoteRecord, String>, PagingAndSortingRepository<QuoteRecord, String> {
+
+    @Query("select * from quote order by at desc")
+    fun findAllSortedDesc(): List<QuoteRecord>
+}

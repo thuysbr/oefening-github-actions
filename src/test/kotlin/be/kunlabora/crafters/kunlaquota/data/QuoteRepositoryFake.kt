@@ -19,7 +19,6 @@ class QuoteRepositoryFake(
     } as Result<AddFailure, Quote>
 
     override fun findAll() : Result<FetchQuotesFailed, List<Quote>> = orFail(QuoteRepository::findAll.name) {
-        Ok(backingList.toList())
+        Ok(backingList.toList().sortedByDescending { it.at })
     } as Result<FetchQuotesFailed, List<Quote>>
-
 }

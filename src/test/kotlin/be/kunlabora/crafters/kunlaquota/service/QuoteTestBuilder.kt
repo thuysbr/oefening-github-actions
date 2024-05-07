@@ -7,9 +7,11 @@ import java.time.LocalDateTime
 fun aSingleLineQuote(
     name: String = "snarf",
     text: String = "snarf snarf",
+    at: LocalDateTime = LocalDateTime.now(),
 ) = Quote(
     id = EntityId.new(),
-    lines = listOf(Quote.Line(1, name, text))
+    lines = listOf(Quote.Line(1, name, text)),
+    at = at,
 )
 
 fun aMultiLineQuote(id: QuoteId = EntityId.new(), at: LocalDateTime = LocalDateTime.now(), build: LineBuilder.() -> Unit): Quote {

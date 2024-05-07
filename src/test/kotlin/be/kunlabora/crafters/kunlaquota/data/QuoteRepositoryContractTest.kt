@@ -9,12 +9,16 @@ import be.kunlabora.crafters.kunlaquota.service.domain.QuoteId
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import java.time.LocalDateTime
 
 abstract class QuoteRepositoryContractTest(private val quoteRepository: QuoteRepository) {
 
     @Test
     fun `can store quotes`() {
-        val aQuote = aSingleLineQuote(name = "Jonesuuu", "When I kotlin, I kotlin. When I java, I java. But when I javascript.. I die a little on the inside.")
+        val aQuote = aSingleLineQuote(
+            name = "Jonesuuu",
+            "When I kotlin, I kotlin. When I java, I java. But when I javascript.. I die a little on the inside."
+        )
 
         val storedQuote = quoteRepository.store(aQuote).valueOrThrow()
 
@@ -35,12 +39,13 @@ abstract class QuoteRepositoryContractTest(private val quoteRepository: QuoteRep
 
     @Test
     fun `can fetch quotes`() {
-        val quote1 = aSingleLineQuote(name = "Joker", "Why so serious? :)").save()
-        val quote2 = aSingleLineQuote(name = "Uncle Ben", "With great power comes great responsibility").save()
+        val now = LocalDateTime.now()
+        val quote1 = aSingleLineQuote(at = now.minusSeconds(1), name = "Joker", text = "Why so serious? :)").save()
+        val quote2 = aSingleLineQuote(at = now, name = "Uncle Ben", text = "With great power comes great responsibility").save()
 
         val quotes = quoteRepository.findAll().valueOrThrow()
 
-        assertThat(quotes).containsExactlyInAnyOrder(quote1, quote2)
+        assertThat(quotes).containsExactly(quote2, quote1)
     }
 
     @Test

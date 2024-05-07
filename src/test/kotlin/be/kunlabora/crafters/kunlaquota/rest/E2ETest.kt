@@ -70,6 +70,22 @@ class E2ETest(
     }
 
     @Test
+    fun `fetching quotes should return them in order of newest to oldest`() {
+        val oldestQuote = AddQuote(listOf(Quote.Line(1, "Snarf", "schnarf schnarrrff")))
+        val oldestLocation = restTemplate.postForLocation("/api/quote", oldestQuote)
+        assertThat(oldestLocation.path).isNotEmpty()
+
+        val newestQuote = AddQuote(listOf(Quote.Line(1, "Lion-o", "STFU Snarf!")))
+        val newestLocation = restTemplate.postForLocation("/api/quote", newestQuote)
+        assertThat(newestLocation.path).isNotEmpty()
+
+        val response = restTemplate.exchange<List<Quote>>("/api/quote", HttpMethod.GET)
+
+        assertThat(response.body?.map { it.id.value })
+            .containsExactly(newestLocation.lastSegment(), oldestLocation.lastSegment())
+    }
+
+    @Test
     fun `adding multiple lines with the same order returns a helpful error`() {
         val lines = listOf(
             Quote.Line(1, "Lion-o", "STFU Snarf!"),
