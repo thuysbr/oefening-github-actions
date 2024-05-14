@@ -8,20 +8,4 @@ interface QuoteShareRepository {
     fun find(quoteId: QuoteId): Result<ShareFailure, QuoteShare?>
 }
 
-class QuoteShareRepositoryFake: QuoteShareRepository {
-    private val quoteShares: MutableMap<QuoteId, QuoteShare> = mutableMapOf()
-
-    override fun upsert(quoteId: QuoteId, quoteShareProvider: QuoteShareProvider): Result<ShareFailure, QuoteShare> {
-        return quoteShares[quoteId]
-            ?.let { Result.Ok(it) }
-            ?: quoteShareProvider(quoteId)
-                .also { quoteShares[quoteId] = it }
-                .let { Result.Ok(it) }
-    }
-
-    override fun find(quoteId: QuoteId): Result<ShareFailure, QuoteShare?> {
-        return Result.Ok(quoteShares[quoteId])
-    }
-}
-
 typealias QuoteShareProvider = (QuoteId) -> QuoteShare

@@ -13,4 +13,8 @@ class DataConfig {
     fun quoteRepository(jdbcAggregateTemplate: JdbcAggregateTemplate, quoteDAO: QuoteDAO) =
         DBQuoteRepository(jdbcAggregateTemplate, quoteDAO)
 
+    @Bean
+    fun quoteShareRepository(jdbcAggregateTemplate: JdbcAggregateTemplate, quoteShareDAO: QuoteShareDAO) =
+        DBQuoteShareRepository(jdbcAggregateTemplate, quoteShareDAO)
+
 }

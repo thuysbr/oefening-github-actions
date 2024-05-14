@@ -22,7 +22,7 @@ interface IQuotes {
 class Quotes(
     private val quoteRepository: QuoteRepository,
     private val quoteShareProvider: QuoteShareProvider,
-    private val quoteShareRepository: QuoteShareRepository = QuoteShareRepositoryFake(),
+    private val quoteShareRepository: QuoteShareRepository,
 ) : IQuotes {
 
     override fun execute(addQuote: AddQuote, dateProvider: () -> LocalDateTime): Result<AddFailure, Quote> =

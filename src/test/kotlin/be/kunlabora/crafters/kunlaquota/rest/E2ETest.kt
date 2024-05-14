@@ -1,9 +1,9 @@
 package be.kunlabora.crafters.kunlaquota.rest
 
 import be.kunlabora.crafters.kunlaquota.TestKunlaquotaApplication
-import be.kunlabora.crafters.kunlaquota.data.SubtractingQuoteShareProvider
 import be.kunlabora.crafters.kunlaquota.service.AddQuote
 import be.kunlabora.crafters.kunlaquota.service.ShareQuote
+import be.kunlabora.crafters.kunlaquota.service.SubtractingQuoteShareProvider
 import be.kunlabora.crafters.kunlaquota.service.domain.Quote
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteId
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteShare
