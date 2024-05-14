@@ -1,6 +1,7 @@
 package be.kunlabora.crafters.kunlaquota.rest
 
 import be.kunlabora.crafters.kunlaquota.TestKunlaquotaApplication
+import be.kunlabora.crafters.kunlaquota.data.SubtractingQuoteShareProvider
 import be.kunlabora.crafters.kunlaquota.service.AddQuote
 import be.kunlabora.crafters.kunlaquota.service.ShareQuote
 import be.kunlabora.crafters.kunlaquota.service.domain.Quote
@@ -27,14 +28,10 @@ import java.net.URI
 @TestConfiguration
 class ShareProviderConfig {
 
-    private val quoteShareValues = mutableListOf(
-        QuoteShare("FIXSHAREID"),
-        QuoteShare("snarf"),
-    )
-
     @Bean
     @Primary
-    fun dummyQuoteShareProvider(): QuoteShareProvider = { quoteShareValues.removeFirst() }
+    fun dummyQuoteShareProvider(): QuoteShareProvider = SubtractingQuoteShareProvider(expectedQuoteShare = QuoteShare("FIXSHAREID"))
+
 }
 
 @SpringBootTest(

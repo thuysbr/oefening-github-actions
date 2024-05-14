@@ -22,9 +22,8 @@ interface IQuotes {
 class Quotes(
     private val quoteRepository: QuoteRepository,
     private val quoteShareProvider: QuoteShareProvider,
+    private val quoteShareRepository: QuoteShareRepository = QuoteShareRepositoryFake(),
 ) : IQuotes {
-
-    private val quoteShares: MutableMap<QuoteId, QuoteShare> = mutableMapOf()
 
     override fun execute(addQuote: AddQuote, dateProvider: () -> LocalDateTime): Result<AddFailure, Quote> =
         addQuote
@@ -33,13 +32,8 @@ class Quotes(
                 Quote(id = QuoteId.new(), at = dateProvider(), lines = validatedAddQuote.lines).store()
             }
 
-    override fun execute(shareQuote: ShareQuote): Result<ShareFailure, QuoteShare> {
-        return quoteShares[shareQuote.id]
-            ?.let { Ok(it) }
-            ?: quoteShareProvider(shareQuote.id)
-                .also { quoteShares[shareQuote.id] = it }
-                .let { Ok(it) }
-    }
+    override fun execute(shareQuote: ShareQuote): Result<ShareFailure, QuoteShare> =
+        quoteShareRepository.upsert(shareQuote.id, quoteShareProvider)
 
 
     private fun Quote.store() = quoteRepository.store(this)

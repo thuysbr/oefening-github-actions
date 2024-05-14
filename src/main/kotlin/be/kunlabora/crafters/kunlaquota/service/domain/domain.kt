@@ -1,9 +1,6 @@
 package be.kunlabora.crafters.kunlaquota.service.domain
 
-import be.kunlabora.crafters.kunlaquota.AddFailure
-import be.kunlabora.crafters.kunlaquota.FetchQuotesFailed
 import be.kunlabora.crafters.kunlaquota.service.EntityId
-import be.kunlabora.crafters.kunlaquota.service.Result
 import java.time.LocalDateTime
 
 typealias QuoteId = EntityId<Quote>
@@ -19,12 +16,5 @@ data class Quote(
         val text: String,
     )
 }
-
-interface QuoteRepository {
-    fun store(quote: Quote): Result<AddFailure, Quote>
-    fun findAll(): Result<FetchQuotesFailed, List<Quote>>
-}
-
-typealias QuoteShareProvider = (QuoteId) -> QuoteShare
 
 @JvmInline value class QuoteShare(val value: String)

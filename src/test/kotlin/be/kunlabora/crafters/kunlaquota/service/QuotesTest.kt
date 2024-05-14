@@ -3,6 +3,7 @@ package be.kunlabora.crafters.kunlaquota.service
 import be.kunlabora.crafters.kunlaquota.AddQuoteFailed
 import be.kunlabora.crafters.kunlaquota.FetchQuotesFailed
 import be.kunlabora.crafters.kunlaquota.data.QuoteRepositoryFake
+import be.kunlabora.crafters.kunlaquota.data.SubtractingQuoteShareProvider
 import be.kunlabora.crafters.kunlaquota.service.Result.Error
 import be.kunlabora.crafters.kunlaquota.service.domain.Quote
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteRepository
@@ -13,10 +14,11 @@ import java.time.LocalDateTime
 
 class QuotesTest {
     private val quoteRepositoryFake = QuoteRepositoryFake()
-    private val quoteShares = mutableListOf(QuoteShare("fixed"), QuoteShare("other"))
+    private val subtractingProvider = SubtractingQuoteShareProvider(expectedQuoteShare = QuoteShare("fixed"))
+
     private val quotes = Quotes(
         quoteRepository = quoteRepositoryFake,
-        quoteShareProvider = { quoteShares.removeFirst() },
+        quoteShareProvider = subtractingProvider,
     )
 
     @Test
