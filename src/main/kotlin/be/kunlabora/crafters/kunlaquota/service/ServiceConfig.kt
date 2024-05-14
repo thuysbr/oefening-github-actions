@@ -18,5 +18,5 @@ class ServiceConfig {
     ) = Quotes(quoteRepository, quoteShareProvider, quoteShareRepository)
 
     @Bean
-    fun quoteShareProvider(): QuoteShareProvider = { quoteId -> QuoteShare(quoteId.value) }
+    fun quoteShareProvider(): QuoteShareProvider = { quoteId -> QuoteShare(quoteId.value.take(12)) }
 }
