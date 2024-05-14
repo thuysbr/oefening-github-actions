@@ -26,9 +26,15 @@ import java.net.URI
 
 @TestConfiguration
 class ShareProviderConfig {
+
+    private val quoteShareValues = mutableListOf(
+        QuoteShare("FIXSHAREID"),
+        QuoteShare("snarf"),
+    )
+
     @Bean
     @Primary
-    fun dummyQuoteShareProvider(): QuoteShareProvider = { QuoteShare("FIXSHAREID") }
+    fun dummyQuoteShareProvider(): QuoteShareProvider = { quoteShareValues.removeFirst() }
 }
 
 @SpringBootTest(
@@ -105,9 +111,11 @@ class E2ETest(
         val newLocation = restTemplate.postForLocation("/api/quote", addQuote)
         assertThat(newLocation.path).isNotEmpty()
 
-        val sharedLocation =
-            restTemplate.postForLocation(newLocation, ShareQuote(QuoteId.fromString(newLocation.lastSegment())))
-        assertThat(sharedLocation.lastSegment()).isEqualTo("?shared=FIXSHAREID")
+        restTemplate.postForLocation(newLocation, ShareQuote(QuoteId.fromString(newLocation.lastSegment())))
+            .also { assertThat(it.lastSegment()).isEqualTo("?shared=FIXSHAREID") }
+
+        restTemplate.postForLocation(newLocation, ShareQuote(QuoteId.fromString(newLocation.lastSegment())))
+            .also { assertThat(it.lastSegment()).isEqualTo("?shared=FIXSHAREID") }
     }
 }
 

@@ -13,9 +13,10 @@ import java.time.LocalDateTime
 
 class QuotesTest {
     private val quoteRepositoryFake = QuoteRepositoryFake()
+    private val quoteShares = mutableListOf(QuoteShare("fixed"), QuoteShare("other"))
     private val quotes = Quotes(
         quoteRepository = quoteRepositoryFake,
-        quoteShareProvider = { QuoteShare("fixed") },
+        quoteShareProvider = { quoteShares.removeFirst() },
     )
 
     @Test
@@ -101,6 +102,17 @@ class QuotesTest {
         }
 
         assertThat(actual).isEqualTo(Result.Ok(expectedQuote))
+    }
+
+    @Test
+    fun `When sharing the same Quote for a second time, the same QuoteShare is returned`() {
+        val quoteId = aSingleLineQuote().save().id
+
+        quotes.execute(ShareQuote(id = quoteId))
+            .also { assertThat(it).isEqualTo(Result.Ok(QuoteShare("fixed"))) }
+
+        quotes.execute(ShareQuote(id = quoteId))
+            .also { assertThat(it).isEqualTo(Result.Ok(QuoteShare("fixed"))) }
     }
 
     private fun Quote.save() =

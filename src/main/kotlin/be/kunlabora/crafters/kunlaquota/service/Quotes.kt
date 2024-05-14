@@ -10,7 +10,11 @@ import be.kunlabora.crafters.kunlaquota.service.domain.*
 import java.time.LocalDateTime
 
 interface IQuotes {
-    fun execute(addQuote: AddQuote, dateProvider: () -> LocalDateTime = { LocalDateTime.now() }): Result<AddFailure, Quote>
+    fun execute(
+        addQuote: AddQuote,
+        dateProvider: () -> LocalDateTime = { LocalDateTime.now() }
+    ): Result<AddFailure, Quote>
+
     fun execute(shareQuote: ShareQuote): Result<ShareFailure, QuoteShare>
     fun findAll(): Result<FetchQuotesFailed, List<Quote>>
 }
@@ -19,7 +23,10 @@ class Quotes(
     private val quoteRepository: QuoteRepository,
     private val quoteShareProvider: QuoteShareProvider,
 ) : IQuotes {
-    override fun execute(addQuote: AddQuote, dateProvider : () -> LocalDateTime): Result<AddFailure, Quote> =
+
+    private val quoteShares: MutableMap<QuoteId, QuoteShare> = mutableMapOf()
+
+    override fun execute(addQuote: AddQuote, dateProvider: () -> LocalDateTime): Result<AddFailure, Quote> =
         addQuote
             .validate()
             .flatMap { validatedAddQuote ->
@@ -27,7 +34,11 @@ class Quotes(
             }
 
     override fun execute(shareQuote: ShareQuote): Result<ShareFailure, QuoteShare> {
-        return Ok(quoteShareProvider(shareQuote.id))
+        return quoteShares[shareQuote.id]
+            ?.let { Ok(it) }
+            ?: quoteShareProvider(shareQuote.id)
+                .also { quoteShares[shareQuote.id] = it }
+                .let { Ok(it) }
     }
 
 
