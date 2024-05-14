@@ -4,7 +4,6 @@ import be.kunlabora.crafters.kunlaquota.service.domain.CanShareQuotes
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteId
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteRepository
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteShare
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -17,7 +16,6 @@ class ServiceConfig {
     ) = Quotes(quoteRepository, quoteShareProvider)
 
     @Bean
-    @ConditionalOnMissingBean
     fun quoteShareProvider(): CanShareQuotes =
         object : CanShareQuotes {
             override fun invoke(quoteId: QuoteId): QuoteShare = QuoteShare(quoteId.value)

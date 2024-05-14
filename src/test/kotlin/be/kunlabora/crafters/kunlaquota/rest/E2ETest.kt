@@ -33,7 +33,7 @@ object DummyQuoteShareProvider : CanShareQuotes {
 class ShareProviderConfig {
     @Bean
     @Primary
-    fun quoteShareProvider(): CanShareQuotes = DummyQuoteShareProvider
+    fun dummyQuoteShareProvider(): CanShareQuotes = DummyQuoteShareProvider
 }
 
 @SpringBootTest(
