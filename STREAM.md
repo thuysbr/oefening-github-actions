@@ -9,7 +9,10 @@ Find the stream [over here on Twitch](https://twitch.tv/livecodingwithsch3lp).
 * [x] Rename Either to Result/Ok/Error
 * [x] Maybe rename Stub to Fake
 * [x] And make sure they're ordered newest first
-* [ ] Make sharing quotes work
+* [x] Make sharing quotes work
+* [ ] Improve QuoteShareProvider to return humanly readable shares
+* [ ] The share link is returned in a location header which is weird, don't do that
+* [ ] There's also a bunch of failure paths that haven't been tested in the repositories
 * [ ] Format localdatetime output in json properly (like so: "2024-05-07T21:53:00Z" and not "[2024,05,07,21,53,00]")
 
 ## Quotes
