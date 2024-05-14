@@ -17,7 +17,7 @@ interface IQuotes {
 
 class Quotes(
     private val quoteRepository: QuoteRepository,
-    private val quoteShareProvider: QuoteShareProvider,
+    private val quoteShareProvider: CanShareQuotes,
 ) : IQuotes {
     override fun execute(addQuote: AddQuote, dateProvider : () -> LocalDateTime): Result<AddFailure, Quote> =
         addQuote

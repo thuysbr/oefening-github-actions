@@ -3,13 +3,12 @@ package be.kunlabora.crafters.kunlaquota.rest
 import be.kunlabora.crafters.kunlaquota.TestKunlaquotaApplication
 import be.kunlabora.crafters.kunlaquota.service.AddQuote
 import be.kunlabora.crafters.kunlaquota.service.ShareQuote
+import be.kunlabora.crafters.kunlaquota.service.domain.CanShareQuotes
 import be.kunlabora.crafters.kunlaquota.service.domain.Quote
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteId
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteShare
-import be.kunlabora.crafters.kunlaquota.service.domain.QuoteShareProvider
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -17,6 +16,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.boot.test.web.client.exchange
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Import
 import org.springframework.context.annotation.Primary
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
@@ -25,23 +25,23 @@ import org.springframework.jdbc.core.JdbcOperations
 import org.springframework.test.jdbc.JdbcTestUtils
 import java.net.URI
 
-object DummyQuoteShareProvider : QuoteShareProvider {
-    override operator fun invoke(quoteId: QuoteId)  = QuoteShare("fixed")
+object DummyQuoteShareProvider : CanShareQuotes {
+    override operator fun invoke(quoteId: QuoteId) = QuoteShare("FIXSHAREID")
 }
 
 @TestConfiguration
 class ShareProviderConfig {
     @Bean
     @Primary
-    fun dummyQuoteShareProvider() : QuoteShareProvider = DummyQuoteShareProvider
+    fun quoteShareProvider(): CanShareQuotes = DummyQuoteShareProvider
 }
 
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    classes = [
-        ShareProviderConfig::class,
-        TestKunlaquotaApplication::class,
-    ]
+)
+@Import(
+    ShareProviderConfig::class,
+    TestKunlaquotaApplication::class,
 )
 class E2ETest(
     @Autowired private val restTemplate: TestRestTemplate,
@@ -101,7 +101,6 @@ class E2ETest(
     }
 
     @Test
-    @Disabled("until implemented")
     fun `a quote can be shared with an easily shareable http link`() {
         val lines = listOf(
             Quote.Line(1, "Lion-o", "STFU Snarf!"),
@@ -112,10 +111,11 @@ class E2ETest(
         assertThat(newLocation.path).isNotEmpty()
 
         println("Posting to $newLocation")
-        val sharedLocation = restTemplate.postForLocation(newLocation, ShareQuote(QuoteId.fromString(newLocation.lastSegment())))
-        assertThat(sharedLocation.lastSegment()).isEqualTo("fixed")
+        val sharedLocation =
+            restTemplate.postForLocation(newLocation, ShareQuote(QuoteId.fromString(newLocation.lastSegment())))
+        assertThat(sharedLocation.lastSegment()).isEqualTo("?shared=FIXSHAREID")
     }
 }
 
-fun URI.append(path: String): URI = this.resolve(this.lastSegment()+"/").resolve(path)
+fun URI.append(path: String): URI = this.resolve(this.lastSegment() + "/").resolve(path)
 fun URI.lastSegment() = path.substringAfterLast('/')

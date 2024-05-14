@@ -9,13 +9,15 @@ Find the stream [over here on Twitch](https://twitch.tv/livecodingwithsch3lp).
 * [x] Rename Either to Result/Ok/Error
 * [x] Maybe rename Stub to Fake
 * [x] And make sure they're ordered newest first
-* [ ] Format localdatetime output in json properly (like so: "2024-05-07T21:53:00Z" and not "[2024,05,07,21,53,00]")
 * [ ] Make sharing quotes work
+* [ ] Format localdatetime output in json properly (like so: "2024-05-07T21:53:00Z" and not "[2024,05,07,21,53,00]")
 
 ## Quotes
 
 > Jonesuuu: When I kotlin, I kotlin. When I java, I java. But when I javascript.. I die a little on the inside.
+> karel1980: "I don't like component scanning" should be the first quote you put in the system when it's live
 
+ 
 ## Improvements for next time
 ### Before
 * [x] Figure out royalty-free music again

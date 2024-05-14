@@ -62,4 +62,4 @@ private fun <E> EntityId<E>.asUri(request: ServerRequest): URI =
     request.uriBuilder().path("/{id}").build(this.value)
 
 private fun QuoteShare.asUri(request: ServerRequest): URI =
-    request.uriBuilder().path("?share={id}").build(this.value)
+    request.uriBuilder().path("/?shared={id}").build(this.value)

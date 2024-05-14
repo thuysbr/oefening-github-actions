@@ -4,9 +4,7 @@ import be.kunlabora.crafters.kunlaquota.AddQuoteFailed
 import be.kunlabora.crafters.kunlaquota.FetchQuotesFailed
 import be.kunlabora.crafters.kunlaquota.data.QuoteRepositoryFake
 import be.kunlabora.crafters.kunlaquota.service.Result.Error
-import be.kunlabora.crafters.kunlaquota.service.domain.Quote
-import be.kunlabora.crafters.kunlaquota.service.domain.QuoteRepository
-import be.kunlabora.crafters.kunlaquota.service.domain.QuoteShare
+import be.kunlabora.crafters.kunlaquota.service.domain.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
@@ -15,7 +13,7 @@ class QuotesTest {
     private val quoteRepositoryFake = QuoteRepositoryFake()
     private val quotes = Quotes(
         quoteRepository = quoteRepositoryFake,
-        quoteShareProvider = { QuoteShare("fixed") }
+        quoteShareProvider = object: CanShareQuotes { override operator fun invoke(quoteId: QuoteId) = QuoteShare("fixed") },
     )
 
     @Test

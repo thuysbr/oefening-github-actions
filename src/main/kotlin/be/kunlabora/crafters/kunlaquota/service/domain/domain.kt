@@ -25,6 +25,8 @@ interface QuoteRepository {
     fun findAll(): Result<FetchQuotesFailed, List<Quote>>
 }
 
-typealias QuoteShareProvider = (QuoteId) -> QuoteShare
+interface CanShareQuotes {
+    operator fun invoke(quoteId: QuoteId): QuoteShare
+}
 
 @JvmInline value class QuoteShare(val value: String)

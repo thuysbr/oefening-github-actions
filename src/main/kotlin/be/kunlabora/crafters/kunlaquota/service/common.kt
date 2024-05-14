@@ -7,10 +7,14 @@ import be.kunlabora.crafters.kunlaquota.service.domain.QuoteId
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import java.util.*
 
+typealias IdProvider = () -> String
+val uuidStringProvider: IdProvider = { UUID.randomUUID().toString() }
+
 @Suppress("unused")
 class EntityId<E> private constructor(val value: String) {
     companion object {
-        fun <E> new(): EntityId<E> = EntityId(UUID.randomUUID().toString())
+        fun <E> new(idProvider: IdProvider = uuidStringProvider): EntityId<E> =
+            EntityId(idProvider())
         fun <E> fromString(value: String): EntityId<E> = EntityId(UUID.fromString(value).toString())
     }
 
