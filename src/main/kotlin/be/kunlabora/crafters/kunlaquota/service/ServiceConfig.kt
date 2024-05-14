@@ -1,23 +1,20 @@
 package be.kunlabora.crafters.kunlaquota.service
 
-import be.kunlabora.crafters.kunlaquota.service.domain.CanShareQuotes
-import be.kunlabora.crafters.kunlaquota.service.domain.QuoteId
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteRepository
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteShare
+import be.kunlabora.crafters.kunlaquota.service.domain.QuoteShareProvider
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
 class ServiceConfig {
+
     @Bean
     fun quotes(
         quoteRepository: QuoteRepository,
-        quoteShareProvider: CanShareQuotes,
+        quoteShareProvider: QuoteShareProvider,
     ) = Quotes(quoteRepository, quoteShareProvider)
 
     @Bean
-    fun quoteShareProvider(): CanShareQuotes =
-        object : CanShareQuotes {
-            override fun invoke(quoteId: QuoteId): QuoteShare = QuoteShare(quoteId.value)
-        }
+    fun quoteShareProvider(): QuoteShareProvider = { quoteId -> QuoteShare(quoteId.value) }
 }

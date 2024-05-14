@@ -3,10 +3,10 @@ package be.kunlabora.crafters.kunlaquota.rest
 import be.kunlabora.crafters.kunlaquota.TestKunlaquotaApplication
 import be.kunlabora.crafters.kunlaquota.service.AddQuote
 import be.kunlabora.crafters.kunlaquota.service.ShareQuote
-import be.kunlabora.crafters.kunlaquota.service.domain.CanShareQuotes
 import be.kunlabora.crafters.kunlaquota.service.domain.Quote
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteId
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteShare
+import be.kunlabora.crafters.kunlaquota.service.domain.QuoteShareProvider
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -16,7 +16,6 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.boot.test.web.client.exchange
 import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Import
 import org.springframework.context.annotation.Primary
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
@@ -25,23 +24,19 @@ import org.springframework.jdbc.core.JdbcOperations
 import org.springframework.test.jdbc.JdbcTestUtils
 import java.net.URI
 
-object DummyQuoteShareProvider : CanShareQuotes {
-    override operator fun invoke(quoteId: QuoteId) = QuoteShare("FIXSHAREID")
-}
-
 @TestConfiguration
 class ShareProviderConfig {
     @Bean
     @Primary
-    fun dummyQuoteShareProvider(): CanShareQuotes = DummyQuoteShareProvider
+    fun dummyQuoteShareProvider(): QuoteShareProvider = { QuoteShare("FIXSHAREID") }
 }
 
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-)
-@Import(
-    ShareProviderConfig::class,
-    TestKunlaquotaApplication::class,
+    classes = [
+        TestKunlaquotaApplication::class,
+        ShareProviderConfig::class,
+    ]
 )
 class E2ETest(
     @Autowired private val restTemplate: TestRestTemplate,
@@ -110,7 +105,6 @@ class E2ETest(
         val newLocation = restTemplate.postForLocation("/api/quote", addQuote)
         assertThat(newLocation.path).isNotEmpty()
 
-        println("Posting to $newLocation")
         val sharedLocation =
             restTemplate.postForLocation(newLocation, ShareQuote(QuoteId.fromString(newLocation.lastSegment())))
         assertThat(sharedLocation.lastSegment()).isEqualTo("?shared=FIXSHAREID")
