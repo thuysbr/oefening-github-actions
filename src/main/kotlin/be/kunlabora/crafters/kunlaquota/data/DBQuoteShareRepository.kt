@@ -1,6 +1,7 @@
 package be.kunlabora.crafters.kunlaquota.data
 
 import be.kunlabora.crafters.kunlaquota.ShareFailure
+import be.kunlabora.crafters.kunlaquota.ShareQuoteFailed
 import be.kunlabora.crafters.kunlaquota.service.Result
 import be.kunlabora.crafters.kunlaquota.service.Result.Ok
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteId
@@ -17,15 +18,18 @@ class DBQuoteShareRepository(
     private val quoteShareDAO: QuoteShareDAO,
 ) : QuoteShareRepository {
 
-    override fun upsert(quoteId: QuoteId, quoteShareProvider: QuoteShareProvider): Result<ShareFailure, QuoteShare> {
-        return quoteShareDAO.findByQuoteId(quoteId.value)
-            ?.toQuoteShare()?.let { Ok(it) }
-            ?: quoteShareProvider(quoteId)
-                .toRecord(quoteId)
-                .save()
-                .toQuoteShare()
-                .let { Ok(it) }
-    }
+    override fun upsert(quoteId: QuoteId, quoteShareProvider: QuoteShareProvider): Result<ShareFailure, QuoteShare> =
+        try {
+            quoteShareDAO.findByQuoteId(quoteId.value)
+                ?.toQuoteShare()?.let { Ok(it) }
+                ?: quoteShareProvider(quoteId)
+                    .toRecord(quoteId)
+                    .save()
+                    .toQuoteShare()
+                    .let { Ok(it) }
+        } catch (e: Exception) {
+            Result.Error(ShareQuoteFailed)
+        }
 
     private fun QuoteShareRecord.save() = jdbcAggregateTemplate.insert(this)
 
