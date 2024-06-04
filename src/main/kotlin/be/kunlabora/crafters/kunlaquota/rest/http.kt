@@ -40,7 +40,7 @@ fun apiRoutes(quotes: IQuotes): RouterFunctionDsl.() -> Unit = {
                     }
                 }.get()
         }
-        POST("{id}") { request ->
+        POST("share") { request ->
             request.body<ShareQuote>()
                 .execute()
                 .map { quoteShare ->

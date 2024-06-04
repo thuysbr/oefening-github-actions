@@ -17,7 +17,7 @@ Content-Type: application/json
 }
 
 ### Share Quote
-POST http://localhost:8080/api/quote/9fb2cbf6-0171-4a94-84b8-ef1506cd7c6f
+POST http://localhost:8080/api/quote/share
 Content-Type: application/json
 
 {

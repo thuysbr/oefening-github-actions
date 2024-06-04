@@ -109,10 +109,10 @@ class E2ETest(
         val newLocation = restTemplate.postForLocation("/api/quote", addQuote)
         assertThat(newLocation.path).isNotEmpty()
 
-        restTemplate.postForEntity<String>(newLocation, ShareQuote(QuoteId.fromString(newLocation.lastSegment())))
+        restTemplate.postForEntity<String>("/api/quote/share", ShareQuote(QuoteId.fromString(newLocation.lastSegment())))
             .also { assertThat(it.body).isEqualTo("FIXSHAREID") }
 
-        restTemplate.postForEntity<String>(newLocation, ShareQuote(QuoteId.fromString(newLocation.lastSegment())))
+        restTemplate.postForEntity<String>("/api/quote/share", ShareQuote(QuoteId.fromString(newLocation.lastSegment())))
             .also { assertThat(it.body).isEqualTo("FIXSHAREID") }
     }
 }
