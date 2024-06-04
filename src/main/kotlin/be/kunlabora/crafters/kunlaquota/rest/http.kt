@@ -4,22 +4,28 @@ import be.kunlabora.crafters.kunlaquota.AddQuoteFailed
 import be.kunlabora.crafters.kunlaquota.AddQuoteInvalid
 import be.kunlabora.crafters.kunlaquota.ShareQuoteFailed
 import be.kunlabora.crafters.kunlaquota.service.*
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.slf4j.LoggerFactory
+import org.springframework.http.MediaType
 import org.springframework.web.servlet.function.RouterFunctionDsl
 import org.springframework.web.servlet.function.ServerRequest
 import org.springframework.web.servlet.function.ServerResponse
 import org.springframework.web.servlet.function.body
 import java.net.URI
 
-fun apiRoutes(quotes: IQuotes): RouterFunctionDsl.() -> Unit = {
+fun apiRoutes(quotes: IQuotes, objectMapper: ObjectMapper): RouterFunctionDsl.() -> Unit = {
     fun AddQuote.execute() = quotes.execute(this)
     fun ShareQuote.execute() = quotes.execute(this)
+    fun Any.toJson() = objectMapper.writeValueAsString(this)
+
 
     "/quote".nest {
-        GET {
+        GET { request: ServerRequest ->
             quotes.findAll()
                 .map { foundQuotes ->
-                    ServerResponse.ok().body(foundQuotes)
+                    ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(foundQuotes.toJson())
                 }
                 .recover { failure ->
                     ServerResponse.status(500).build().also { logger.error("$failure") }
@@ -54,6 +60,7 @@ fun apiRoutes(quotes: IQuotes): RouterFunctionDsl.() -> Unit = {
         }
     }
 }
+
 
 private val logger = LoggerFactory.getLogger("KunlaQuotaLogger")
 
