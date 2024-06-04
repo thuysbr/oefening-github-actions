@@ -10,24 +10,19 @@ Content-Type: application/json
   "lines": [
     {
       "order": 1,
-      "name": "Snarf",
-      "text": "snarf snarf"
-    },
-    {
-      "order": 2,
-      "name": "Lion-O",
-      "text": "stfu snarf"
+      "name": "Kratos",
+      "text": "Don't be sorry, be better."
     }
   ]
 }
 
 ### Share Quote
-POST http://localhost:8080/api/quote/30f1b068-047d-4451-b387-4128e6d61461
+POST http://localhost:8080/api/quote/9fb2cbf6-0171-4a94-84b8-ef1506cd7c6f
 Content-Type: application/json
 
 {
   "@type": "ShareQuote",
   "id": {
-    "value": "30f1b068-047d-4451-b387-4128e6d61461"
+    "value": "9fb2cbf6-0171-4a94-84b8-ef1506cd7c6f"
   }
 }

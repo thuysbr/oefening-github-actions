@@ -16,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.boot.test.web.client.exchange
+import org.springframework.boot.test.web.client.postForEntity
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Primary
 import org.springframework.http.HttpEntity
@@ -108,11 +109,11 @@ class E2ETest(
         val newLocation = restTemplate.postForLocation("/api/quote", addQuote)
         assertThat(newLocation.path).isNotEmpty()
 
-        restTemplate.postForLocation(newLocation, ShareQuote(QuoteId.fromString(newLocation.lastSegment())))
-            .also { assertThat(it.lastSegment()).isEqualTo("?shared=FIXSHAREID") }
+        restTemplate.postForEntity<String>(newLocation, ShareQuote(QuoteId.fromString(newLocation.lastSegment())))
+            .also { assertThat(it.body).isEqualTo("FIXSHAREID") }
 
-        restTemplate.postForLocation(newLocation, ShareQuote(QuoteId.fromString(newLocation.lastSegment())))
-            .also { assertThat(it.lastSegment()).isEqualTo("?shared=FIXSHAREID") }
+        restTemplate.postForEntity<String>(newLocation, ShareQuote(QuoteId.fromString(newLocation.lastSegment())))
+            .also { assertThat(it.body).isEqualTo("FIXSHAREID") }
     }
 }
 

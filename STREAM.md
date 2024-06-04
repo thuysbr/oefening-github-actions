@@ -10,8 +10,9 @@ Find the stream [over here on Twitch](https://twitch.tv/livecodingwithsch3lp).
 * [x] Maybe rename Stub to Fake
 * [x] And make sure they're ordered newest first
 * [x] Make sharing quotes work
-* [ ] Improve QuoteShareProvider to return humanly readable shares
+* [x] Improve QuoteShareProvider to return humanly readable shares
 * [ ] The share link is returned in a location header which is weird, don't do that
+* [ ] The share quote endpoint has the definition of a QuoteId twice: once in the url path and once in the payload/command. Either pick 1, or add validation that they need to be the same.
 * [ ] There's also a bunch of failure paths that haven't been tested in the repositories
 * [ ] Format localdatetime output in json properly (like so: "2024-05-07T21:53:00Z" and not "[2024,05,07,21,53,00]")
 
