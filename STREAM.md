@@ -16,6 +16,7 @@ Find the stream [over here on Twitch](https://twitch.tv/livecodingwithsch3lp).
 * [x] There's also a bunch of failure paths that haven't been tested in the repositories
 * [x] Format localdatetime output in json properly (like so: "2024-05-07T21:53:00Z" and not "[2024,05,07,21,53,00]")
 * [ ] Figure out why the default objectmapper isn't used for conversion of objects to json when using RouterDsl.
+* [ ] Reading a SharedQuote (KQ-4)
 
 ## Quotes
 
