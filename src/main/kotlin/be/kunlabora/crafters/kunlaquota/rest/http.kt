@@ -21,11 +21,13 @@ fun apiRoutes(quotes: IQuotes, objectMapper: ObjectMapper): RouterFunctionDsl.()
 
     "/quote".nest {
         GET { request: ServerRequest ->
+            objectMapper
             quotes.findAll()
                 .map { foundQuotes ->
                     ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
-                        .body(foundQuotes.toJson())
+                        .body(foundQuotes)
+//                        .body(foundQuotes.toJson())
                 }
                 .recover { failure ->
                     ServerResponse.status(500).build().also { logger.error("$failure") }

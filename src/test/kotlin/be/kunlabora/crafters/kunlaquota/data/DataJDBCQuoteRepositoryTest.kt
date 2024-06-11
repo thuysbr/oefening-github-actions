@@ -1,6 +1,5 @@
 package be.kunlabora.crafters.kunlaquota.data
 
-import be.kunlabora.crafters.kunlaquota.service.domain.QuoteShareRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.data.jdbc.AutoConfigureDataJdbc
 import org.springframework.boot.test.context.SpringBootTest
@@ -10,6 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest
     PostgresContainerConfig::class,
 ])
 @AutoConfigureDataJdbc
-class DBQuoteShareRepositoryTest(
-    @Autowired val quoteShareRepository: QuoteShareRepository,
-) : QuoteShareRepositoryContractTest(quoteShareRepository)
+class DataJDBCQuoteRepositoryTest(
+    @Autowired val quoteRepository: DataJDBCQuoteRepository,
+) : QuoteRepositoryContractTest(quoteRepository)

@@ -10,3 +10,5 @@ spring:
     password: quota
   flyway:
     enabled: true
+  jackson:
+    date-format: com.fasterxml.jackson.databind.util.StdDateFormat

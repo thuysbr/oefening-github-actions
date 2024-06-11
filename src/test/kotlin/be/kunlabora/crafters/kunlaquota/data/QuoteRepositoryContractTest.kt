@@ -17,7 +17,7 @@ abstract class QuoteRepositoryContractTest(private val quoteRepository: QuoteRep
     fun `can store quotes`() {
         val aQuote = aSingleLineQuote(
             name = "Jonesuuu",
-            "When I kotlin, I kotlin. When I java, I java. But when I javascript.. I die a little on the inside."
+            text = "When I kotlin, I kotlin. When I java, I java. But when I javascript.. I die a little on the inside.",
         )
 
         val storedQuote = quoteRepository.store(aQuote).valueOrThrow()

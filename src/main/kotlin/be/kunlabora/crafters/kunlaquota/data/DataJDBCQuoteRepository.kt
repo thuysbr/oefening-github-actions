@@ -17,7 +17,7 @@ import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.PagingAndSortingRepository
 import java.time.LocalDateTime
 
-class DBQuoteRepository(
+class DataJDBCQuoteRepository(
     private val jdbcAggregateTemplate: JdbcAggregateTemplate,
     private val quoteDAO: QuoteDAO,
 ) : QuoteRepository {
