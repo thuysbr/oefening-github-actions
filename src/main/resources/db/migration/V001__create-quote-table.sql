@@ -7,7 +7,7 @@ CREATE TABLE "quote"
 CREATE TABLE "quote_lines"
 (
     QUOTE VARCHAR(36) NOT NULL,
-    "order" INT,
+    "order" INT NOT NULL,
     NAME VARCHAR NOT NULL,
     TEXT VARCHAR NOT NULL
 );
