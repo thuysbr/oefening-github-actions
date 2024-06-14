@@ -22,6 +22,7 @@ class DBJPAQuoteRepository(
         if (quoteDAO.existsById(quote.id.value)) {
             Error(AddQuoteFailed("Quote already exists!"))
         } else {
+            //TODO try to clean up now that we no longer have bidirectionality
             val quoteRecord = quote.toPartialRecord()
             val quoteLines = quote.lines.map { it.toRecord(quoteRecord) }.toSet()
             val completeQuoteRecord = quoteRecord.apply { lines = quoteLines }
