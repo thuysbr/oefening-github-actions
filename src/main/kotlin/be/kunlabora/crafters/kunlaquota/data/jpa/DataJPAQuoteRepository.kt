@@ -34,7 +34,7 @@ class DBJPAQuoteRepository(
     private fun Quote.toPartialRecord() = QuoteRecordJPA(id = id.value, at = at)
 
     private fun Quote.Line.toRecord(quoteRecord: QuoteRecordJPA) =
-        QuoteLineRecordJPA(QuoteLineId(quoteRecord.id, order), name, text, quoteRecord)
+        QuoteLineRecordJPA(QuoteLineId(quoteRecord.id, order), name, text)
 
     private fun QuoteRecordJPA.toQuote() =
         Quote(
@@ -54,7 +54,8 @@ data class QuoteRecordJPA(
     val id: String,
     val at: LocalDateTime,
 ) {
-    @OneToMany(cascade = [CascadeType.ALL], mappedBy = "quote", fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinColumn(name = "quote")
     lateinit var lines: Set<QuoteLineRecordJPA>
 }
 
@@ -65,9 +66,6 @@ data class QuoteLineRecordJPA(
     val id: QuoteLineId,
     val name: String,
     val text: String,
-    @ManyToOne
-    @JoinColumn(name = "quote", insertable = false, updatable = false, nullable = false)
-    val quote: QuoteRecordJPA,
 )
 
 @Embeddable
