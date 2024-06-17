@@ -22,20 +22,18 @@ class DBJPAQuoteRepository(
         if (quoteDAO.existsById(quote.id.value)) {
             Error(AddQuoteFailed("Quote already exists!"))
         } else {
-            //TODO try to clean up now that we no longer have bidirectionality
-            val quoteRecord = quote.toPartialRecord()
-            val quoteLines = quote.lines.map { it.toRecord(quoteRecord) }.toSet()
-            val completeQuoteRecord = quoteRecord.apply { lines = quoteLines }
-            Ok(quoteDAO.save(completeQuoteRecord).toQuote())
+            val quoteRecord = quote.toRecord()
+            Ok(quoteDAO.save(quoteRecord).toQuote())
         }
 
     override fun findAll(): Result<FetchQuotesFailed, List<Quote>> =
         Ok(quoteDAO.findAllSortedDesc().map { it.toQuote() })
 
-    private fun Quote.toPartialRecord() = QuoteRecordJPA(id = id.value, at = at)
+    private fun Quote.toRecord() =
+        QuoteRecordJPA(id = id.value, at = at, lines = lines.map { it.toRecord(id.value) }.toSet())
 
-    private fun Quote.Line.toRecord(quoteRecord: QuoteRecordJPA) =
-        QuoteLineRecordJPA(QuoteLineId(quoteRecord.id, order), name, text)
+    private fun Quote.Line.toRecord(id: String) =
+        QuoteLineRecordJPA(QuoteLineId(id, order), name, text)
 
     private fun QuoteRecordJPA.toQuote() =
         Quote(
@@ -54,11 +52,10 @@ data class QuoteRecordJPA(
     @Id
     val id: String,
     val at: LocalDateTime,
-) {
     @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "quote")
-    lateinit var lines: Set<QuoteLineRecordJPA>
-}
+    val lines: Set<QuoteLineRecordJPA>,
+)
 
 @Entity
 @Table(name = "quote_lines")
