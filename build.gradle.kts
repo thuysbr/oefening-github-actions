@@ -6,7 +6,6 @@ plugins {
 	id("io.spring.dependency-management") version "1.1.5"
 	kotlin("jvm") version kotlinVersion
 	kotlin("plugin.spring") version kotlinVersion
-	kotlin("plugin.jpa") version kotlinVersion
 }
 
 group = "be.kunlabora.crafters"
