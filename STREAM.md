@@ -15,7 +15,7 @@ Find the stream [over here on Twitch](https://twitch.tv/livecodingwithsch3lp).
 * [x] The share quote endpoint has the definition of a QuoteId twice: once in the url path and once in the payload/command. Either pick 1, or add validation that they need to be the same.
 * [x] There's also a bunch of failure paths that haven't been tested in the repositories
 * [x] Format localdatetime output in json properly (like so: "2024-05-07T21:53:00Z" and not "[2024,05,07,21,53,00]")
-* [ ] Figure out why the default objectmapper isn't used for conversion of objects to json when using RouterDsl.
+* [x] Figure out why the default objectmapper isn't used for conversion of objects to json when using RouterDsl. (It's because `@EnableWebMvc` expects you to configure and wire your own `ObjectMapper`)
 * [ ] Reading a SharedQuote (KQ-4)
 
 ## Quotes

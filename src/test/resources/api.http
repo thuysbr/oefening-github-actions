@@ -26,3 +26,6 @@ Content-Type: application/json
     "value": "a0ab07e8-a48e-483e-8df0-193ef48df3a0"
   }
 }
+
+### Read Shared Quote
+GET http://localhost:8080/api/quote?share=ISWSDPG
