@@ -4,10 +4,7 @@ import be.kunlabora.crafters.kunlaquota.AddQuoteFailed
 import be.kunlabora.crafters.kunlaquota.FetchQuotesFailed
 import be.kunlabora.crafters.kunlaquota.data.QuoteRepositoryFake
 import be.kunlabora.crafters.kunlaquota.service.Result.Error
-import be.kunlabora.crafters.kunlaquota.service.domain.Quote
-import be.kunlabora.crafters.kunlaquota.service.domain.QuoteRepository
-import be.kunlabora.crafters.kunlaquota.service.domain.QuoteShare
-import be.kunlabora.crafters.kunlaquota.service.domain.QuoteShareRepositoryFake
+import be.kunlabora.crafters.kunlaquota.service.domain.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
@@ -15,21 +12,21 @@ import java.time.LocalDateTime
 class QuotesTest {
     private val quoteRepositoryFake = QuoteRepositoryFake()
     private val quoteShareRepositoryFake = QuoteShareRepositoryFake()
-    private val subtractingProvider = SubtractingQuoteShareProvider(expectedQuoteShare = QuoteShare("fixed"))
+    private val quoteShareProvider = HashedQuoteShareProvider()
 
     private val quotes = Quotes(
         quoteRepository = quoteRepositoryFake,
-        quoteShareProvider = subtractingProvider,
+        quoteShareProvider = quoteShareProvider,
         quoteShareRepository = quoteShareRepositoryFake,
     )
 
     @Test
     fun `View all quotes`() {
         val oldestDate: LocalDateTime = LocalDateTime.now()
-        val oldestQuote: Quote = aSingleLineQuote(at = oldestDate, name = "Snarf", text = "snarf snarf").save()
+        val oldestQuote: Quote = aSingleLineQuote(name = "Snarf", text = "snarf snarf", at = oldestDate).save()
 
         val newerDate = oldestDate.plusSeconds(1)
-        val newerQuote = aSingleLineQuote(at = newerDate, name = "Lion-O", text = "stfu Snarf").save()
+        val newerQuote = aSingleLineQuote(name = "Lion-O", text = "stfu Snarf", at = newerDate).save()
 
         val actual = quotes.findAll().valueOrThrow()
 
@@ -43,8 +40,8 @@ class QuotesTest {
     fun `View all quotes - different style of given when then`() {
         val (oldestQuote, newestQuote) = LocalDateTime.now().let {
             Pair(
-                aSingleLineQuote(at = it, name = "Snarf", text = "snarf snarf").save(),
-                aSingleLineQuote(at = it.plusSeconds(1), name = "Lion-O", text = "stfu Snarf").save()
+                aSingleLineQuote(name = "Snarf", text = "snarf snarf", at = it).save(),
+                aSingleLineQuote(name = "Lion-O", text = "stfu Snarf", at = it.plusSeconds(1)).save()
             )
         }
 
@@ -110,13 +107,14 @@ class QuotesTest {
 
     @Test
     fun `When sharing the same Quote for a second time, the same QuoteShare is returned`() {
-        val quoteId = aSingleLineQuote().save().id
+        val quoteId = QuoteId.fromString<Quote>("749aa702-046d-44e1-b600-e7cefa1299e0")
+        aSingleLineQuote(quoteId = quoteId).save()
 
         quotes.execute(ShareQuote(id = quoteId))
-            .also { assertThat(it).isEqualTo(Result.Ok(QuoteShare("fixed"))) }
+            .also { assertThat(it).isEqualTo(Result.Ok(QuoteShare("GIQYTPQ"))) }
 
         quotes.execute(ShareQuote(id = quoteId))
-            .also { assertThat(it).isEqualTo(Result.Ok(QuoteShare("fixed"))) }
+            .also { assertThat(it).isEqualTo(Result.Ok(QuoteShare("GIQYTPQ"))) }
     }
 
     private fun Quote.save() =

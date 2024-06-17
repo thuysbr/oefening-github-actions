@@ -40,8 +40,12 @@ abstract class QuoteRepositoryContractTest(private val quoteRepository: QuoteRep
     @Test
     fun `can fetch quotes`() {
         val now = LocalDateTime.now()
-        val quote1 = aSingleLineQuote(at = now.minusSeconds(1), name = "Joker", text = "Why so serious? :)").save()
-        val quote2 = aSingleLineQuote(at = now, name = "Uncle Ben", text = "With great power comes great responsibility").save()
+        val quote1 = aSingleLineQuote(name = "Joker", text = "Why so serious? :)", at = now.minusSeconds(1)).save()
+        val quote2 = aSingleLineQuote(
+            name = "Uncle Ben",
+            text = "With great power comes great responsibility",
+            at = now
+        ).save()
 
         val quotes = quoteRepository.findAll().valueOrThrow()
 
@@ -50,7 +54,7 @@ abstract class QuoteRepositoryContractTest(private val quoteRepository: QuoteRep
 
     @Test
     fun `storing an already existing quote shouldn't work`() {
-        val aStoredQuote = aSingleLineQuote(name = "Joker", "Why so serious? :)").save()
+        val aStoredQuote = aSingleLineQuote(name = "Joker", text = "Why so serious? :)").save()
 
         val actual = quoteRepository.store(aStoredQuote)
 

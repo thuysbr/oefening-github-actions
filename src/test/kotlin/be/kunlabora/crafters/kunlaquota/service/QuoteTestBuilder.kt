@@ -5,11 +5,12 @@ import be.kunlabora.crafters.kunlaquota.service.domain.QuoteId
 import java.time.LocalDateTime
 
 fun aSingleLineQuote(
+    quoteId: QuoteId = EntityId.new(),
     name: String = "snarf",
     text: String = "snarf snarf",
     at: LocalDateTime = LocalDateTime.now(),
 ) = Quote(
-    id = EntityId.new(),
+    id = quoteId,
     lines = listOf(Quote.Line(1, name, text)),
     at = at,
 )

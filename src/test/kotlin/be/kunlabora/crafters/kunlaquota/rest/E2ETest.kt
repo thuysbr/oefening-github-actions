@@ -3,22 +3,17 @@ package be.kunlabora.crafters.kunlaquota.rest
 import be.kunlabora.crafters.kunlaquota.TestKunlaquotaApplication
 import be.kunlabora.crafters.kunlaquota.service.AddQuote
 import be.kunlabora.crafters.kunlaquota.service.ShareQuote
-import be.kunlabora.crafters.kunlaquota.service.SubtractingQuoteShareProvider
+import be.kunlabora.crafters.kunlaquota.service.domain.HashedQuoteShareProvider
 import be.kunlabora.crafters.kunlaquota.service.domain.Quote
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteId
-import be.kunlabora.crafters.kunlaquota.service.domain.QuoteShare
-import be.kunlabora.crafters.kunlaquota.service.domain.QuoteShareProvider
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.boot.test.web.client.exchange
 import org.springframework.boot.test.web.client.postForEntity
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Primary
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
@@ -26,25 +21,16 @@ import org.springframework.jdbc.core.JdbcOperations
 import org.springframework.test.jdbc.JdbcTestUtils
 import java.net.URI
 
-@TestConfiguration
-class ShareProviderConfig {
-
-    @Bean
-    @Primary
-    fun dummyQuoteShareProvider(): QuoteShareProvider = SubtractingQuoteShareProvider(expectedQuoteShare = QuoteShare("FIXSHAREID"))
-
-}
-
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
     classes = [
         TestKunlaquotaApplication::class,
-        ShareProviderConfig::class,
     ]
 )
 class E2ETest(
     @Autowired private val restTemplate: TestRestTemplate,
     @Autowired private val jdbcOperations: JdbcOperations,
+    @Autowired private val hashedQuoteShareProvider: HashedQuoteShareProvider,
 ) {
 
     @BeforeEach
@@ -109,11 +95,14 @@ class E2ETest(
         val newLocation = restTemplate.postForLocation("/api/quote", addQuote)
         assertThat(newLocation.path).isNotEmpty()
 
-        restTemplate.postForEntity<String>("/api/quote/share", ShareQuote(QuoteId.fromString(newLocation.lastSegment())))
-            .also { assertThat(it.body).isEqualTo("FIXSHAREID") }
+        val quoteId = QuoteId.fromString<Quote>(newLocation.lastSegment())
+        val expectedQuoteShareId = hashedQuoteShareProvider(quoteId).value
 
-        restTemplate.postForEntity<String>("/api/quote/share", ShareQuote(QuoteId.fromString(newLocation.lastSegment())))
-            .also { assertThat(it.body).isEqualTo("FIXSHAREID") }
+        restTemplate.postForEntity<String>("/api/quote/share", ShareQuote(quoteId))
+            .also { assertThat(it.body).isEqualTo(expectedQuoteShareId) }
+
+        restTemplate.postForEntity<String>("/api/quote/share", ShareQuote(quoteId))
+            .also { assertThat(it.body).isEqualTo(expectedQuoteShareId) }
     }
 }
 
