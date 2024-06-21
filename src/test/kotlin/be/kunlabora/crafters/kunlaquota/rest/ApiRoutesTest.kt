@@ -7,6 +7,7 @@ import be.kunlabora.crafters.kunlaquota.service.Result
 import be.kunlabora.crafters.kunlaquota.service.ShareQuote
 import be.kunlabora.crafters.kunlaquota.service.domain.Quote
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteShare
+import be.kunlabora.crafters.kunlaquota.web.WebConfig
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

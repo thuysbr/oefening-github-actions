@@ -1,4 +1,4 @@
-package be.kunlabora.crafters.kunlaquota.rest
+package be.kunlabora.crafters.kunlaquota.web.rest
 
 import be.kunlabora.crafters.kunlaquota.AddFailure
 import be.kunlabora.crafters.kunlaquota.QuoteAlreadyExists
@@ -16,7 +16,6 @@ import java.net.URI
 fun apiRoutes(quotes: IQuotes): RouterFunctionDsl.() -> Unit = {
     fun AddQuote.execute() = quotes.execute(this)
     fun ShareQuote.execute() = quotes.execute(this)
-
 
     "/quote".nest {
         GET {

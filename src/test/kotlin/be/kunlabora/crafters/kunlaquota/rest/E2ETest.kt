@@ -6,6 +6,7 @@ import be.kunlabora.crafters.kunlaquota.service.ShareQuote
 import be.kunlabora.crafters.kunlaquota.service.domain.HashedQuoteShareProvider
 import be.kunlabora.crafters.kunlaquota.service.domain.Quote
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteId
+import be.kunlabora.crafters.kunlaquota.web.rest.AddQuoteError
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
