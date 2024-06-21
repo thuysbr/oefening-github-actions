@@ -31,7 +31,7 @@ class FakeConfig {
 
     class FailingQuotesFake: IQuotes {
         override fun execute(addQuote: AddQuote, dateProvider: () -> LocalDateTime): Result<AddFailure, Quote> {
-            return Result.Error(AddQuoteFailed("💩"))
+            return Result.Error(QuoteAlreadyExists("💩"))
         }
 
         override fun execute(shareQuote: ShareQuote): Result<ShareFailure, QuoteShare> {

@@ -1,7 +1,8 @@
 package be.kunlabora.crafters.kunlaquota.rest
 
-import be.kunlabora.crafters.kunlaquota.AddQuoteFailed
-import be.kunlabora.crafters.kunlaquota.AddQuoteInvalid
+import be.kunlabora.crafters.kunlaquota.AddFailure
+import be.kunlabora.crafters.kunlaquota.QuoteAlreadyExists
+import be.kunlabora.crafters.kunlaquota.QuoteIsInvalid
 import be.kunlabora.crafters.kunlaquota.ShareQuoteFailed
 import be.kunlabora.crafters.kunlaquota.service.*
 import org.slf4j.LoggerFactory
@@ -29,21 +30,17 @@ fun apiRoutes(quotes: IQuotes): RouterFunctionDsl.() -> Unit = {
                     ServerResponse.status(500).build().also { logger.error("$failure") }
                 }.get()
         }
+
         POST("") { request ->
             request.body<AddQuote>()
                 .execute()
                 .map { quote ->
                     ServerResponse.created(quote.id.asUri(request)).build()
                 }
-                .recover { failure ->
-                    when (failure) {
-                        is AddQuoteInvalid -> ServerResponse.status(400).body(AddQuoteError(failure.message))
-                            .also { logger.error(failure.message) }
-
-                        is AddQuoteFailed -> ServerResponse.status(500).build().also { logger.error(failure.message) }
-                    }
-                }.get()
+                .handleAddQuoteFailure()
+                .get()
         }
+
         POST("share") { request ->
             request.body<ShareQuote>()
                 .execute()
@@ -54,10 +51,20 @@ fun apiRoutes(quotes: IQuotes): RouterFunctionDsl.() -> Unit = {
                     when (failure) {
                         is ShareQuoteFailed -> ServerResponse.status(500).build().also { logger.error(failure.message) }
                     }
-                }.get()
+                }
+                .get()
         }
     }
 }
+
+private fun Result<AddFailure, ServerResponse>.handleAddQuoteFailure() =
+    recover { failure ->
+        when (failure) {
+            is QuoteIsInvalid -> ServerResponse.status(400).body(AddQuoteError(failure.message))
+            is QuoteAlreadyExists -> ServerResponse.status(500)
+                .body(AddQuoteError("Something fishy occurred on our side. Maybe try again?"))
+        }.also { logger.error(failure.message) }
+    }
 
 
 private val logger = LoggerFactory.getLogger("KunlaQuotaLogger")

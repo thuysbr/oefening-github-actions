@@ -1,8 +1,8 @@
 package be.kunlabora.crafters.kunlaquota.data
 
 import be.kunlabora.crafters.kunlaquota.AddFailure
-import be.kunlabora.crafters.kunlaquota.AddQuoteFailed
 import be.kunlabora.crafters.kunlaquota.FetchQuotesFailed
+import be.kunlabora.crafters.kunlaquota.QuoteAlreadyExists
 import be.kunlabora.crafters.kunlaquota.service.Result
 import be.kunlabora.crafters.kunlaquota.service.Result.Error
 import be.kunlabora.crafters.kunlaquota.service.Result.Ok
@@ -27,7 +27,7 @@ class DataJDBCQuoteRepository(
      * Using the DAO would delegate to an update method instead of an insert method ¯\_(ツ)_/¯
      */
     override fun store(quote: Quote): Result<AddFailure, Quote> =
-        if (quoteDAO.existsById(quote.id.value)) Error(AddQuoteFailed("Quote already exists!"))
+        if (quoteDAO.existsById(quote.id.value)) Error(QuoteAlreadyExists("Quote already exists!"))
         else Ok(jdbcAggregateTemplate.insert(quote.toRecord()).toQuote())
 
     override fun findAll(): Result<FetchQuotesFailed, List<Quote>> =

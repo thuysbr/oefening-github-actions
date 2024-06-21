@@ -7,8 +7,8 @@ sealed interface AddFailure : Failure
 sealed interface ReadFailure : Failure
 sealed interface ShareFailure : Failure
 
-data class AddQuoteFailed(override val message: String) : AddFailure
-data class AddQuoteInvalid(override val message: String) : AddFailure
+data class QuoteAlreadyExists(override val message: String) : AddFailure
+data class QuoteIsInvalid(override val message: String) : AddFailure
 
 data object FetchQuotesFailed : ReadFailure
 

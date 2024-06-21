@@ -1,8 +1,8 @@
 package be.kunlabora.crafters.kunlaquota.service
 
 import be.kunlabora.crafters.kunlaquota.AddFailure
-import be.kunlabora.crafters.kunlaquota.AddQuoteInvalid
 import be.kunlabora.crafters.kunlaquota.FetchQuotesFailed
+import be.kunlabora.crafters.kunlaquota.QuoteIsInvalid
 import be.kunlabora.crafters.kunlaquota.ShareFailure
 import be.kunlabora.crafters.kunlaquota.service.Result.Error
 import be.kunlabora.crafters.kunlaquota.service.Result.Ok
@@ -41,7 +41,7 @@ class Quotes(
     override fun findAll(): Result<FetchQuotesFailed, List<Quote>> = quoteRepository.findAll()
 
     private fun AddQuote.validate(): Result<AddFailure, AddQuote> =
-        if (someLinesHaveSameOrder()) Error(AddQuoteInvalid("Can't have multiple lines with the same order."))
+        if (someLinesHaveSameOrder()) Error(QuoteIsInvalid("Can't have multiple lines with the same order."))
         else Ok(this)
 
     private fun AddQuote.someLinesHaveSameOrder() =

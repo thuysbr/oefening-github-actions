@@ -1,7 +1,7 @@
 package be.kunlabora.crafters.kunlaquota.service
 
-import be.kunlabora.crafters.kunlaquota.AddQuoteFailed
 import be.kunlabora.crafters.kunlaquota.FetchQuotesFailed
+import be.kunlabora.crafters.kunlaquota.QuoteAlreadyExists
 import be.kunlabora.crafters.kunlaquota.data.QuoteRepositoryFake
 import be.kunlabora.crafters.kunlaquota.service.Result.Error
 import be.kunlabora.crafters.kunlaquota.service.domain.*
@@ -66,11 +66,11 @@ class QuotesTest {
 
     @Test
     fun `When adding a quote fails, a failure is returned`() {
-        quoteRepositoryFake.failOnNext(QuoteRepository::store.name, AddQuoteFailed("💩"))
+        quoteRepositoryFake.failOnNext(QuoteRepository::store.name, QuoteAlreadyExists("💩"))
 
         val actual = quotes.execute(AddQuote(lines = listOf(Quote.Line(1, name = "Snarf", text = "Snarf snarf"))))
 
-        assertThat(actual).isEqualTo(Error(AddQuoteFailed("💩")))
+        assertThat(actual).isEqualTo(Error(QuoteAlreadyExists("💩")))
     }
 
     @Test
