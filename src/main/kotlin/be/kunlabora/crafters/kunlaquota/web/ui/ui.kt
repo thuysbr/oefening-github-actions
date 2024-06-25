@@ -9,6 +9,7 @@ import org.springframework.http.MediaType
 import org.springframework.web.servlet.function.RouterFunctionDsl
 import org.springframework.web.servlet.function.ServerResponse
 import java.io.StringWriter
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 fun uiRoutes(quotes: IQuotes): RouterFunctionDsl.() -> Unit = {
@@ -30,11 +31,14 @@ fun wrapper(title: String, block: DIV.() -> Unit) =
             title { +title }
             meta(charset = "utf-8")
             meta(name = "viewport", content = "width=device-width, initial-scale=1")
-            link(rel = "stylesheet", href = "https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css")
+            link(
+                rel = "stylesheet",
+                href = "https://cdn.jsdelivr.net/npm/bulma@1.0.1/css/versions/bulma-no-dark-mode.min.css"
+            )
         }
         body {
             section(classes = "section") {
-                div(classes="container") {
+                div(classes = "container") {
                     block()
                 }
             }
@@ -51,13 +55,28 @@ private fun FlowContent.showQuotes(quotes: IQuotes) {
 }
 
 private fun FlowContent.showQuote(quote: Quote) {
-    p {
-        p { +"-------${quote.at.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)}-----------" }
-        p {
-            quote.lines.forEach { line ->
-                +"${line.name}: ${line.text}"
+    div("box") {
+        div("content") {
+            div("is-flex is-justify-content-flex-end") {
+                p("is-size-7 has-text-grey-light") {
+                    +formatDate(quote.at)
+                }
+            }
+            div("media") {
+                div("media-content") {
+                    quote.lines.forEach { line ->
+                        p {
+                            strong { +"${line.name}: " }
+                            +line.text
+                        }
+                    }
+                }
             }
         }
-        p { +"----------------------------------------" }
     }
+
+}
+
+private fun formatDate(date: LocalDateTime): String {
+    return DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm").format(date)
 }

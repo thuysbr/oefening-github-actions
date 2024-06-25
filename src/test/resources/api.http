@@ -10,8 +10,13 @@ Content-Type: application/json
   "lines": [
     {
       "order": 1,
-      "name": "Kratos",
-      "text": "Don't be sorry, be better."
+      "name": "Jonesuuu",
+      "text": "When I kotlin, I kotlin. When I java, I java. But when I javascript.. I die a little on the inside"
+    },
+    {
+      "order": 2,
+      "name": "Karel1980",
+      "text": "'I don't like component scanning' should be the first quote you put in the system when it's live"
     }
   ]
 }
