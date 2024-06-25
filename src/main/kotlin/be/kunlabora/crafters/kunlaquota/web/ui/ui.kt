@@ -47,36 +47,40 @@ fun wrapper(title: String, block: DIV.() -> Unit) =
 
 private fun FlowContent.showQuotes(quotes: IQuotes) {
     quotes.findAll()
-        .map { fetchedQuotes ->
-            fetchedQuotes.forEach { quote ->
-                showQuote(quote)
-            }
-        }
+        .map { fetchedQuotes -> fetchedQuotes.forEach { quote(it) } }
 }
 
-private fun FlowContent.showQuote(quote: Quote) {
+private fun FlowContent.quote(quote: Quote) {
     div("box") {
         div("content") {
-            div("is-flex is-justify-content-flex-end") {
-                p("is-size-7 has-text-grey-light") {
-                    +formatDate(quote.at)
-                }
-            }
-            div("media") {
-                div("media-content") {
-                    quote.lines.forEach { line ->
-                        p {
-                            strong { +"${line.name}: " }
-                            +line.text
-                        }
-                    }
-                }
-            }
+            quoteDate(quote.at)
+            quoteLines(quote.lines)
         }
     }
-
 }
 
-private fun formatDate(date: LocalDateTime): String {
-    return DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm").format(date)
+private fun FlowContent.quoteLines(lines: List<Quote.Line>) {
+    div("media") {
+        div("media-content") {
+            lines.forEach { quoteLine(it) }
+        }
+    }
 }
+
+private fun FlowContent.quoteLine(line: Quote.Line) {
+    p {
+        strong { +"${line.name}: " }
+        +line.text
+    }
+}
+
+private fun FlowContent.quoteDate(at: LocalDateTime) {
+    div("is-flex is-justify-content-flex-end") {
+        p("is-size-7 has-text-grey-light") {
+            +at.formatToKunlaDate()
+        }
+    }
+}
+
+val dateTimePattern: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+private fun LocalDateTime.formatToKunlaDate() = dateTimePattern.format(this)
