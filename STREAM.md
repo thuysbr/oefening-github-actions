@@ -17,6 +17,8 @@ Find the stream [over here on Twitch](https://twitch.tv/livecodingwithsch3lp).
 * [x] Format localdatetime output in json properly (like so: "2024-05-07T21:53:00Z" and not "[2024,05,07,21,53,00]")
 * [x] Figure out why the default objectmapper isn't used for conversion of objects to json when using RouterDsl. (It's because `@EnableWebMvc` expects you to configure and wire your own `ObjectMapper`)
 * [ ] Reading a SharedQuote (KQ-4)
+* [ ] Reading a SharedQuote returns the surrounding quotes
+* [ ] Do pattern matching on the Accept header: if it's application/json return json, otherwise return html
 
 ## Quotes
 

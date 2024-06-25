@@ -99,11 +99,44 @@ class E2ETest(
         val quoteId = QuoteId.fromString<Quote>(newLocation.lastSegment())
         val expectedQuoteShareId = hashedQuoteShareProvider(quoteId).value
 
-        restTemplate.postForEntity<String>("/api/quote/share", ShareQuote(quoteId))
-            .also { assertThat(it.body).isEqualTo(expectedQuoteShareId) }
+        val expectedQuoteShareUrl = "${restTemplate.rootUri}/api/quote?share=$expectedQuoteShareId"
 
         restTemplate.postForEntity<String>("/api/quote/share", ShareQuote(quoteId))
-            .also { assertThat(it.body).isEqualTo(expectedQuoteShareId) }
+            .also { assertThat(it.body).isEqualTo(expectedQuoteShareUrl) }
+
+        restTemplate.postForEntity<String>("/api/quote/share", ShareQuote(quoteId))
+            .also { assertThat(it.body).isEqualTo(expectedQuoteShareUrl) }
+    }
+
+    @Test
+    fun `a shared quote can be accessed with its shareable http link`() {
+        val addQuote = AddQuote(
+            listOf(
+                Quote.Line(1, "Snarf", "schnarf schnarrrff"),
+            )
+        )
+        val newLocation = restTemplate.postForLocation("/api/quote", addQuote)
+        assertThat(newLocation.path).isNotEmpty()
+        val sharedQuoteId = QuoteId.fromString<Quote>(newLocation.lastSegment())
+
+        restTemplate.postForLocation(
+            "/api/quote", AddQuote(
+                listOf(
+                    Quote.Line(1, "Lion-o", "STFU Snarf!"),
+                )
+            )
+        )
+        
+        val expectedQuoteShareId = hashedQuoteShareProvider(sharedQuoteId).value
+        val expectedQuoteShareUrl = "${restTemplate.rootUri}/api/quote?share=$expectedQuoteShareId"
+
+        restTemplate.postForEntity<String>("/api/quote/share", ShareQuote(sharedQuoteId))
+            .also { assertThat(it.body).isEqualTo(expectedQuoteShareUrl) }
+
+        val sharedQuoteResponse =
+            restTemplate.exchange<List<Quote>>("/api/quote?share=$expectedQuoteShareId", HttpMethod.GET)
+
+        assertThat(sharedQuoteResponse.body?.first()?.id).isEqualTo(sharedQuoteId)
     }
 }
 

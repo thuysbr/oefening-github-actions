@@ -51,4 +51,5 @@ data class QuoteShareRecord(
 
 interface QuoteShareDAO : CrudRepository<QuoteShareRecord, String> {
     fun findByQuoteId(quoteId: String): QuoteShareRecord?
+    fun findByReference(reference: String): QuoteShareRecord?
 }
