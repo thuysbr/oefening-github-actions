@@ -4,32 +4,27 @@ import be.kunlabora.crafters.kunlaquota.AddFailure
 import be.kunlabora.crafters.kunlaquota.QuoteAlreadyExists
 import be.kunlabora.crafters.kunlaquota.QuoteIsInvalid
 import be.kunlabora.crafters.kunlaquota.ShareQuoteFailed
-import be.kunlabora.crafters.kunlaquota.data.QuoteShareDAO
 import be.kunlabora.crafters.kunlaquota.service.*
-import be.kunlabora.crafters.kunlaquota.service.domain.QuoteId
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteShare
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 import org.springframework.web.servlet.function.*
 import java.net.URI
 
-fun apiRoutes(quotes: IQuotes, quoteShareDAO: QuoteShareDAO): RouterFunctionDsl.() -> Unit = {
+fun apiRoutes(quotes: IQuotes): RouterFunctionDsl.() -> Unit = {
     fun AddQuote.execute() = quotes.execute(this)
     fun ShareQuote.execute() = quotes.execute(this)
 
     "/quote".nest {
         GET(RequestPredicates.param("share") { true }) { request ->
-            quotes.findAll()
+            quotes.findByQuoteShare(QuoteShare(request.paramOrNull("share")!!))
                 .map { foundQuotes ->
-                    val quoteIdOfTheFoundSharedQuote = quoteShareDAO.findByReference(request.paramOrNull("share")!!)?.quoteId!!
-                    val quoteId : QuoteId = QuoteId.fromString(quoteIdOfTheFoundSharedQuote)
-
                     ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
-                        .body(foundQuotes.filter { it.id == quoteId })
+                        .body(foundQuotes)
                 }
                 .recover { failure ->
-                    ServerResponse.status(500).build().also { logger.error("$failure") }
+                    ServerResponse.status(404).build().also { logger.error("$failure") }
                 }.get()
         }
 

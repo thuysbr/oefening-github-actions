@@ -42,6 +42,10 @@ class FakeConfig {
         override fun findAll(): Result<FetchQuotesFailed, List<Quote>> {
             return Result.Error(FetchQuotesFailed)
         }
+
+        override fun findByQuoteShare(quoteShare: QuoteShare): Result<FetchQuotesFailed, List<Quote>> {
+            return Result.Error(FetchQuotesFailed)
+        }
     }
 }
 
@@ -72,6 +76,17 @@ class ApiRoutesTest(
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isInternalServerError() }
+        }
+
+        assertThat(capturedOutput.out).contains("FetchQuotesFailed")
+    }
+
+    @Test
+    fun `Failures that occur when trying to fetch a shared quote are logged and transformed to a 404`(capturedOutput: CapturedOutput) {
+        mockMvc.get("/api/quote?share=GIQYTPQ") {
+            contentType = MediaType.APPLICATION_JSON
+        }.andExpect {
+            status { isNotFound() }
         }
 
         assertThat(capturedOutput.out).contains("FetchQuotesFailed")

@@ -117,6 +117,25 @@ class QuotesTest {
             .also { assertThat(it).isEqualTo(Result.Ok(QuoteShare("GIQYTPQ"))) }
     }
 
+    @Test
+    fun `When retrieving quotes for a QuoteShare, a list with one Quote is returned if a Quote for that QuoteShare could be found`() {
+        val quoteId = QuoteId.fromString<Quote>("749aa702-046d-44e1-b600-e7cefa1299e0")
+        val sharedQuote = aSingleLineQuote(quoteId = quoteId).save()
+        quotes.execute(ShareQuote(id = quoteId))
+
+        quotes.findByQuoteShare(QuoteShare("GIQYTPQ"))
+            .also { assertThat(it).isEqualTo(Result.Ok(listOf(sharedQuote))) }
+    }
+
+    @Test
+    fun `When retrieving quotes for a QuoteShare, an empty list is returned if the expected Quote was never shared`() {
+        val quoteId = QuoteId.fromString<Quote>("749aa702-046d-44e1-b600-e7cefa1299e0")
+        aSingleLineQuote(quoteId = quoteId).save()
+
+        quotes.findByQuoteShare(QuoteShare("GIQYTPQ"))
+            .also { assertThat(it).isEqualTo(Result.Ok(emptyList<Quote>())) }
+    }
+
     private fun Quote.save() =
         quoteRepositoryFake.store(this).valueOrThrow()
 }

@@ -17,6 +17,7 @@ interface IQuotes {
 
     fun execute(shareQuote: ShareQuote): Result<ShareFailure, QuoteShare>
     fun findAll(): Result<FetchQuotesFailed, List<Quote>>
+    fun findByQuoteShare(quoteShare: QuoteShare): Result<FetchQuotesFailed, List<Quote>>
 }
 
 class Quotes(
@@ -39,6 +40,16 @@ class Quotes(
     private fun Quote.store() = quoteRepository.store(this)
 
     override fun findAll(): Result<FetchQuotesFailed, List<Quote>> = quoteRepository.findAll()
+
+    override fun findByQuoteShare(quoteShare: QuoteShare): Result<FetchQuotesFailed, List<Quote>> {
+        val foundQuoteId = when (val quoteShareResult = quoteShareRepository.findBy(quoteShare)) {
+            is Ok -> quoteShareResult.value
+            is Error -> null
+        }
+        return quoteRepository.findAll().map { quotes ->
+            quotes.filter { it.id == foundQuoteId }
+        }
+    }
 
     private fun AddQuote.validate(): Result<AddFailure, AddQuote> =
         if (someLinesHaveSameOrder()) Error(QuoteIsInvalid("Can't have multiple lines with the same order."))

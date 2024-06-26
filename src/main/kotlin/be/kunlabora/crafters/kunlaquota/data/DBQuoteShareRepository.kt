@@ -33,12 +33,17 @@ class DBQuoteShareRepository(
 
     private fun QuoteShareRecord.save() = jdbcAggregateTemplate.insert(this)
 
-    override fun find(quoteId: QuoteId): Result<ShareFailure, QuoteShare?> {
+    override fun findBy(quoteId: QuoteId): Result<ShareFailure, QuoteShare?> {
         return Ok(quoteShareDAO.findByQuoteId(quoteId.value)?.toQuoteShare())
+    }
+
+    override fun findBy(quoteShare: QuoteShare): Result<ShareFailure, QuoteId?> {
+        return Ok(quoteShareDAO.findByReference(quoteShare.value)?.toQuoteId())
     }
 
     private fun QuoteShareRecord.toQuoteShare() = QuoteShare(this.reference)
     private fun QuoteShare.toRecord(quoteId: QuoteId) = QuoteShareRecord(quoteId.value, this.value)
+    private fun QuoteShareRecord.toQuoteId(): QuoteId = QuoteId.fromString(this.quoteId)
 }
 
 

@@ -1,6 +1,5 @@
 package be.kunlabora.crafters.kunlaquota.web
 
-import be.kunlabora.crafters.kunlaquota.data.QuoteShareDAO
 import be.kunlabora.crafters.kunlaquota.service.IQuotes
 import be.kunlabora.crafters.kunlaquota.web.rest.apiRoutes
 import be.kunlabora.crafters.kunlaquota.web.ui.uiRoutes
@@ -14,8 +13,8 @@ import org.springframework.web.servlet.function.router
 class WebConfig : WebMvcConfigurer {
 
     @Bean
-    fun apiRoutesBean(quotes: IQuotes, quoteShareDAO: QuoteShareDAO) = router {
-        "/api".nest(apiRoutes(quotes, quoteShareDAO))
+    fun apiRoutesBean(quotes: IQuotes) = router {
+        "/api".nest(apiRoutes(quotes))
     }
 
     @Bean

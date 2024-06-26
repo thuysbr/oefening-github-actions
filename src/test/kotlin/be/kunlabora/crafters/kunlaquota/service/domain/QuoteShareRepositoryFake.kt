@@ -14,7 +14,11 @@ class QuoteShareRepositoryFake: QuoteShareRepository {
                 .let { Result.Ok(it) }
     }
 
-    override fun find(quoteId: QuoteId): Result<ShareFailure, QuoteShare?> {
+    override fun findBy(quoteId: QuoteId): Result<ShareFailure, QuoteShare?> {
         return Result.Ok(quoteShares[quoteId])
+    }
+
+    override fun findBy(quoteShare: QuoteShare): Result<ShareFailure, QuoteId?> {
+        return Result.Ok(quoteShares.filterValues { it == quoteShare }.keys.firstOrNull())
     }
 }
