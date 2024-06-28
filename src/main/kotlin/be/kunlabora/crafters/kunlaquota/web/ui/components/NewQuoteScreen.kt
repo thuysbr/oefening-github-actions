@@ -11,10 +11,16 @@ object NewQuoteScreen {
     fun FlowContent.showNewQuote() {
         div("box") {
             form {
+                hxTarget = "#errorMessages"
+                hxSwap = "innerHTML"
+                hxPost = baseUiUrl.path("new")
+
                 quoteLine()
+
                 div("field") {
                     id = "extraLine"
                 }
+
                 div("field is-grouped") {
                     div("control") {
                         button(classes = "button is-link") {
@@ -28,8 +34,6 @@ object NewQuoteScreen {
                     div("control") {
                         button(classes = "button is-primary") {
                             type = ButtonType.submit
-                            hxPost = baseUiUrl.path("new")
-                            hxSwap = "none"
                             +"Submit"
                         }
                     }
@@ -39,15 +43,25 @@ object NewQuoteScreen {
     }
 
     fun FlowContent.quoteLine() {
-        div("field is-grouped columns") {
-            div("control column is-one-fifth") {
+        div("field is-grouped") {
+            div("control") {
                 input(InputType.text, classes = "input", name = "nameInput") {
                     placeholder = "Name"
                 }
             }
-            div("control column") {
+            div("control is-expanded") {
                 input(InputType.text, classes = "input", name = "textInput") {
                     placeholder = "Text"
+                }
+            }
+        }
+    }
+
+    fun FlowContent.errorMessage(vararg messages: String) {
+        article("message is-danger") {
+            div(classes = "message-body") {
+                messages.forEach { message ->
+                    p { +message }
                 }
             }
         }

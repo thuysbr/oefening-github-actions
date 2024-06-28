@@ -3,7 +3,9 @@ package be.kunlabora.crafters.kunlaquota.web.ui
 import be.kunlabora.crafters.kunlaquota.service.AddQuote
 import be.kunlabora.crafters.kunlaquota.service.IQuotes
 import be.kunlabora.crafters.kunlaquota.service.domain.Quote
+import be.kunlabora.crafters.kunlaquota.service.get
 import be.kunlabora.crafters.kunlaquota.web.ui.components.NavBar.navbar
+import be.kunlabora.crafters.kunlaquota.web.ui.components.NewQuoteScreen.errorMessage
 import be.kunlabora.crafters.kunlaquota.web.ui.components.NewQuoteScreen.quoteLine
 import be.kunlabora.crafters.kunlaquota.web.ui.components.NewQuoteScreen.showNewQuote
 import be.kunlabora.crafters.kunlaquota.web.ui.components.ShowQuotesScreen.showQuotes
@@ -49,12 +51,17 @@ fun uiRoutes(quotes: IQuotes): RouterFunctionDsl.() -> Unit = {
         val texts = request.params()["textInput"] ?: emptyList()
 
         val addQuote = AddQuote(
-            names.zip(texts).mapIndexed { idx, (name,text) -> Quote.Line(idx, name, text) }
+            names.zip(texts).mapIndexed { idx, (name, text) -> Quote.Line(idx, name, text) }
         )
         quotes.execute(addQuote)
-        ServerResponse.status(HttpStatus.OK)
-            .header("HX-Redirect", baseUiUrl)
-            .build()
+            .map {
+                ServerResponse.status(HttpStatus.OK)
+                    .header("HX-Redirect", baseUiUrl)
+                    .build()
+            }.recover { failure ->
+                ServerResponse.status(HttpStatus.OK)
+                    .body(partial { errorMessage("Oopsie! Something broke!", failure.message) })
+            }.get()
     }
 
 }
@@ -75,6 +82,7 @@ fun wrapper(title: String, block: DIV.() -> Unit) =
             navbar()
             section(classes = "section") {
                 div(classes = "container") {
+                    div(classes = "block") { id = "errorMessages" }
                     block()
                 }
             }
