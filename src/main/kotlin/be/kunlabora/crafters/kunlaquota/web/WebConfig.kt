@@ -2,6 +2,7 @@ package be.kunlabora.crafters.kunlaquota.web
 
 import be.kunlabora.crafters.kunlaquota.service.IQuotes
 import be.kunlabora.crafters.kunlaquota.web.rest.apiRoutes
+import be.kunlabora.crafters.kunlaquota.web.ui.baseUiUrl
 import be.kunlabora.crafters.kunlaquota.web.ui.uiRoutes
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -19,6 +20,6 @@ class WebConfig : WebMvcConfigurer {
 
     @Bean
     fun uiRoutesBean(quotes: IQuotes) = router {
-        "/ui".nest(uiRoutes(quotes))
+        baseUiUrl.nest(uiRoutes(quotes))
     }
 }

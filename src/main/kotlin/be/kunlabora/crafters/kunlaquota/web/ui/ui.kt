@@ -1,7 +1,11 @@
 package be.kunlabora.crafters.kunlaquota.web.ui
 
+import be.kunlabora.crafters.kunlaquota.service.AddQuote
 import be.kunlabora.crafters.kunlaquota.service.IQuotes
+import be.kunlabora.crafters.kunlaquota.service.domain.Quote
 import be.kunlabora.crafters.kunlaquota.web.ui.components.NavBar.navbar
+import be.kunlabora.crafters.kunlaquota.web.ui.components.NewQuoteScreen.quoteLine
+import be.kunlabora.crafters.kunlaquota.web.ui.components.NewQuoteScreen.showNewQuote
 import be.kunlabora.crafters.kunlaquota.web.ui.components.ShowQuotesScreen.showQuotes
 import kotlinx.html.*
 import kotlinx.html.stream.appendHTML
@@ -10,6 +14,8 @@ import org.springframework.http.MediaType
 import org.springframework.web.servlet.function.RouterFunctionDsl
 import org.springframework.web.servlet.function.ServerResponse
 import java.io.StringWriter
+
+const val baseUiUrl = "/ui"
 
 fun uiRoutes(quotes: IQuotes): RouterFunctionDsl.() -> Unit = {
     GET("") {
@@ -22,6 +28,35 @@ fun uiRoutes(quotes: IQuotes): RouterFunctionDsl.() -> Unit = {
                 }
             )
     }
+    GET("new") {
+        val title = "Add new Quote"
+        ServerResponse.status(HttpStatus.OK)
+            .contentType(MediaType.TEXT_HTML)
+            .body(
+                wrapper(title) {
+                    showNewQuote()
+                }
+            )
+    }
+    POST("new/addLine") {
+        ServerResponse.status(HttpStatus.OK)
+            .body(
+                partial { quoteLine() }
+            )
+    }
+    POST("new") { request ->
+        val names = request.params()["nameInput"] ?: emptyList()
+        val texts = request.params()["textInput"] ?: emptyList()
+
+        val addQuote = AddQuote(
+            names.zip(texts).mapIndexed { idx, (name,text) -> Quote.Line(idx, name, text) }
+        )
+        quotes.execute(addQuote)
+        ServerResponse.status(HttpStatus.OK)
+            .header("HX-Redirect", baseUiUrl)
+            .build()
+    }
+
 }
 
 fun wrapper(title: String, block: DIV.() -> Unit) =
@@ -34,6 +69,7 @@ fun wrapper(title: String, block: DIV.() -> Unit) =
                 rel = "stylesheet",
                 href = "https://cdn.jsdelivr.net/npm/bulma@1.0.1/css/versions/bulma-no-dark-mode.min.css"
             )
+            script(src = "https://unpkg.com/htmx.org@2.0.0") {}
         }
         body {
             navbar()
@@ -44,3 +80,12 @@ fun wrapper(title: String, block: DIV.() -> Unit) =
             }
         }
     }.toString()
+
+fun partial(block: DIV.() -> Unit) = StringWriter().appendHTML().div { block() }.toString()
+
+
+fun String.path(vararg paths: String): String =
+    buildList {
+        add(this@path)
+        addAll(paths)
+    }.joinToString("/")
