@@ -4,7 +4,6 @@ import be.kunlabora.crafters.kunlaquota.service.AddQuote
 import be.kunlabora.crafters.kunlaquota.service.IQuotes
 import be.kunlabora.crafters.kunlaquota.service.domain.Quote
 import be.kunlabora.crafters.kunlaquota.service.get
-import be.kunlabora.crafters.kunlaquota.web.ui.components.NavBar.navbar
 import be.kunlabora.crafters.kunlaquota.web.ui.components.NewQuoteScreen.errorMessage
 import be.kunlabora.crafters.kunlaquota.web.ui.components.NewQuoteScreen.quoteLine
 import be.kunlabora.crafters.kunlaquota.web.ui.components.NewQuoteScreen.showNewQuote
@@ -66,7 +65,7 @@ fun uiRoutes(quotes: IQuotes): RouterFunctionDsl.() -> Unit = {
 
 }
 
-fun wrapper(title: String, block: DIV.() -> Unit) =
+fun wrapper(title: String, block: BODY.() -> Unit) =
     StringWriter().appendHTML().html {
         head {
             title { +title }
@@ -79,18 +78,27 @@ fun wrapper(title: String, block: DIV.() -> Unit) =
             script(src = "https://unpkg.com/htmx.org@2.0.0") {}
         }
         body {
-            navbar()
-            section(classes = "section") {
-                div(classes = "container") {
-                    div(classes = "block") { id = "errorMessages" }
-                    block()
-                }
-            }
+            hero()
+            block()
         }
     }.toString()
 
 fun partial(block: DIV.() -> Unit) = StringWriter().appendHTML().div { block() }.toString()
 
+fun FlowContent.hero() {
+    section(classes = "hero is-primary") {
+        div(classes = "hero-body") {
+            div(classes = "container") {
+                h1(classes = "title") {
+                    +"KunlaQuota"
+                }
+                h2(classes="subtitle"){
+                    +"Share and enjoy funny quotes"
+                }
+            }
+        }
+    }
+}
 
 fun String.path(vararg paths: String): String =
     buildList {
