@@ -3,6 +3,11 @@ package be.kunlabora.crafters.kunlaquota.web.ui.components
 import kotlinx.html.Tag
 
 object Htmx {
+    var Tag.hxGet: String
+        get() = error("not implemented")
+        set(value) {
+            attributes["hx-get"] = value
+        }
     var Tag.hxPost: String
         get() = error("not implemented")
         set(value) {
@@ -17,5 +22,10 @@ object Htmx {
         get() = error("not implemented")
         set(value) {
             attributes["hx-swap"] = value
+        }
+    var Tag.hyper: String
+        get() = error("not implemented")
+        set(value) {
+            attributes["_"] = value
         }
 }

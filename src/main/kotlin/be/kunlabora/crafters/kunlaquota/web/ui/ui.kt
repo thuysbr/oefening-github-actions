@@ -4,10 +4,11 @@ import be.kunlabora.crafters.kunlaquota.service.AddQuote
 import be.kunlabora.crafters.kunlaquota.service.IQuotes
 import be.kunlabora.crafters.kunlaquota.service.domain.Quote
 import be.kunlabora.crafters.kunlaquota.service.get
-import be.kunlabora.crafters.kunlaquota.web.ui.components.NewQuoteScreen.errorMessage
-import be.kunlabora.crafters.kunlaquota.web.ui.components.NewQuoteScreen.quoteLine
-import be.kunlabora.crafters.kunlaquota.web.ui.components.NewQuoteScreen.showNewQuote
-import be.kunlabora.crafters.kunlaquota.web.ui.components.ShowQuotesScreen.showQuotes
+import be.kunlabora.crafters.kunlaquota.web.ui.components.Hero.hero
+import be.kunlabora.crafters.kunlaquota.web.ui.screens.AddQuoteModal.addQuoteLine
+import be.kunlabora.crafters.kunlaquota.web.ui.screens.AddQuoteModal.addQuoteModal
+import be.kunlabora.crafters.kunlaquota.web.ui.screens.ShowQuotesScreen.errorMessage
+import be.kunlabora.crafters.kunlaquota.web.ui.screens.ShowQuotesScreen.showQuotes
 import kotlinx.html.*
 import kotlinx.html.stream.appendHTML
 import org.springframework.http.HttpStatus
@@ -29,20 +30,19 @@ fun uiRoutes(quotes: IQuotes): RouterFunctionDsl.() -> Unit = {
                 }
             )
     }
-    GET("new") {
-        val title = "Add new Quote"
+    GET("showModal") {
         ServerResponse.status(HttpStatus.OK)
             .contentType(MediaType.TEXT_HTML)
             .body(
-                wrapper(title) {
-                    showNewQuote()
+                partial {
+                    addQuoteModal()
                 }
             )
     }
     POST("new/addLine") {
         ServerResponse.status(HttpStatus.OK)
             .body(
-                partial { quoteLine() }
+                partial { addQuoteLine() }
             )
     }
     POST("new") { request ->
@@ -76,29 +76,16 @@ fun wrapper(title: String, block: BODY.() -> Unit) =
                 href = "https://cdn.jsdelivr.net/npm/bulma@1.0.1/css/versions/bulma-no-dark-mode.min.css"
             )
             script(src = "https://unpkg.com/htmx.org@2.0.0") {}
+            script(src = "https://unpkg.com/hyperscript.org@0.9.12") {}
         }
         body {
             hero()
             block()
+            div { id = "modals-here" }
         }
     }.toString()
 
 fun partial(block: DIV.() -> Unit) = StringWriter().appendHTML().div { block() }.toString()
-
-fun FlowContent.hero() {
-    section(classes = "hero is-primary") {
-        div(classes = "hero-body") {
-            div(classes = "container") {
-                h1(classes = "title") {
-                    +"KunlaQuota"
-                }
-                h2(classes="subtitle"){
-                    +"Share and enjoy funny quotes"
-                }
-            }
-        }
-    }
-}
 
 fun String.path(vararg paths: String): String =
     buildList {
