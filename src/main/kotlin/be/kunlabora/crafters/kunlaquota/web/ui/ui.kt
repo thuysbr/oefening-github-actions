@@ -62,7 +62,6 @@ fun uiRoutes(quotes: IQuotes): RouterFunctionDsl.() -> Unit = {
                     .body(partial { errorMessage("Oopsie! Something broke!", failure.message) })
             }.get()
     }
-
 }
 
 fun wrapper(title: String, block: BODY.() -> Unit) =
@@ -80,6 +79,7 @@ fun wrapper(title: String, block: BODY.() -> Unit) =
         }
         body {
             hero()
+            div(classes = "block") { id = "errorMessages" }
             block()
             div { id = "modals-here" }
         }

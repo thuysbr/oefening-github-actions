@@ -17,7 +17,6 @@ object ShowQuotesScreen {
         section(classes = "section") {
             id = "quote-section"
             div(classes = "container") {
-                div(classes = "block") { id = "errorMessages" }
                 quotes.findAll()
                     .map { fetchedQuotes -> fetchedQuotes.forEach { quote(it) } }
             }
