@@ -19,8 +19,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    env:
-      TESTCONTAINER_DOCKER_NETWORK: kunlaquota-testcontainers
 
     steps:
     - uses: actions/checkout@v4
@@ -33,8 +31,14 @@ jobs:
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v3
 
-    - name: Create Docker network for running Testcontainers
-      run: docker network create ${{ env.TESTCONTAINER_DOCKER_NETWORK }}
-
     - name: Build with Gradle Wrapper
       run: ./gradlew build
+
+    - name: Store reports
+      if: failure()
+      uses: actions/upload-artifact@v3
+      with:
+        name: reports
+        path: |
+          **/build/reports/
+          **/build/test-results/
