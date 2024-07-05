@@ -3,6 +3,7 @@ package be.kunlabora.crafters.kunlaquota.service
 import be.kunlabora.crafters.kunlaquota.service.domain.Quote
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteId
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 
 fun aSingleLineQuote(
     quoteId: QuoteId = EntityId.new(),
@@ -12,11 +13,11 @@ fun aSingleLineQuote(
 ) = Quote(
     id = quoteId,
     lines = listOf(Quote.Line(1, name, text)),
-    at = at,
+    at = at.truncatedTo(ChronoUnit.MICROS),
 )
 
 fun aMultiLineQuote(id: QuoteId = EntityId.new(), at: LocalDateTime = LocalDateTime.now(), build: LineBuilder.() -> Unit): Quote {
-    return Quote(id = id, at = at, lines = LineBuilder().apply(build).lines)
+    return Quote(id = id, at = at.truncatedTo(ChronoUnit.MICROS), lines = LineBuilder().apply(build).lines)
 }
 
 class LineBuilder {
