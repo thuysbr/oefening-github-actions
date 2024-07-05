@@ -1,6 +1,6 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
 	val kotlinVersion = "2.0.0"
@@ -40,10 +40,10 @@ dependencies {
 	testImplementation("org.testcontainers:postgresql")
 }
 
-tasks.withType<KotlinCompile> {
-	kotlinOptions {
-		freeCompilerArgs += "-Xjsr305=strict"
-		jvmTarget = "17"
+kotlin {
+	compilerOptions {
+		freeCompilerArgs.add("-Xjsr305=strict")
+		jvmTarget.set(JvmTarget.JVM_17)
 	}
 }
 
