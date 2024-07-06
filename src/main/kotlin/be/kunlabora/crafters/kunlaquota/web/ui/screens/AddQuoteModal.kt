@@ -26,13 +26,13 @@ object AddQuoteModal {
                         hyper = "on click take .is-active from $addQuoteModalId wait 200ms then remove $addQuoteModalId"
                     }
                 }
-                section(classes = "modal-card-body") {
-                    form {
-                        hxTarget = "#errorMessages"
-                        hxSwap = "innerHTML"
-                        hxPost = baseUiUrl.path("new")
-                        hyper = "on submit take .is-active from $addQuoteModalId"
+                form {
+                    hxTarget = "#errorMessages"
+                    hxSwap = "innerHTML"
+                    hxPost = baseUiUrl.path("new")
+                    hyper = "on submit take .is-active from $addQuoteModalId"
 
+                    section(classes = "modal-card-body") {
                         div("field") {
                             id = "extraLine"
                             addQuoteLine()
@@ -50,18 +50,19 @@ object AddQuoteModal {
                             }
                         }
                     }
-                }
-                footer(classes = "modal-card-foot is-justify-content-end") {
-                    style = "border-top: none; display: flex; justify-content: flex-end; width: 100%;"
-                    button(classes = "button is-primary is-success") {
-                        type = ButtonType.submit
-                        style = "margin-right: 0.5rem;"
-                        +"Save"
-                    }
-                    button(classes = "button") {
-                        type = ButtonType.button
-                        hyper = "on click take .is-active from $addQuoteModalId wait 200ms then remove $addQuoteModalId"
-                        +"Cancel"
+                    footer(classes = "modal-card-foot is-justify-content-end") {
+                        style = "border-top: none; display: flex; justify-content: flex-end; width: 100%;"
+                        button(classes = "button is-primary is-success") {
+                            type = ButtonType.submit
+                            style = "margin-right: 0.5rem;"
+                            +"Save"
+                        }
+                        button(classes = "button") {
+                            type = ButtonType.button
+                            hyper =
+                                "on click take .is-active from $addQuoteModalId wait 200ms then remove $addQuoteModalId"
+                            +"Cancel"
+                        }
                     }
                 }
             }
