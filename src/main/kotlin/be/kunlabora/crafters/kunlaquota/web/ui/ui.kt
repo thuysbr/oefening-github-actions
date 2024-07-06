@@ -74,6 +74,10 @@ fun wrapper(title: String, block: BODY.() -> Unit) =
                 rel = "stylesheet",
                 href = "https://cdn.jsdelivr.net/npm/bulma@1.0.1/css/versions/bulma-no-dark-mode.min.css"
             )
+            link(
+                rel = "stylesheet",
+                href = "https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.2/css/fontawesome.min.css"
+            )
             script(src = "https://unpkg.com/htmx.org@2.0.0") {}
             script(src = "https://unpkg.com/hyperscript.org@0.9.12") {}
         }
@@ -85,7 +89,27 @@ fun wrapper(title: String, block: BODY.() -> Unit) =
         }
     }.toString()
 
-fun partial(block: DIV.() -> Unit) = StringWriter().appendHTML().div { block() }.toString()
+fun partial(block: FlowContent.() -> Unit): String {
+    val writer = StringWriter()
+    val consumer = writer.appendHTML()
+    // hacky stuff so we don't have to return a wrapper div
+    object : FlowContent {
+        override val consumer = consumer
+        override val attributes: MutableMap<String, String>
+            get() = mutableMapOf()
+        override val attributesEntries: Collection<Map.Entry<String, String>>
+            get() = emptyList()
+        override val emptyTag: Boolean
+            get() = true
+        override val inlineTag: Boolean
+            get() = true
+        override val namespace: String?
+            get() = null
+        override val tagName: String
+            get() = ""
+    }.block()
+    return writer.toString()
+}
 
 fun String.path(vararg paths: String): String =
     buildList {
