@@ -10,6 +10,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 
 class QuotesTest {
     private val quoteRepositoryFake = QuoteRepositoryFake()
@@ -101,7 +102,7 @@ class QuotesTest {
                     Quote.Line(3, name = "Moonshine", text = "Watch a bitch call lightning"),
                 )
             ),
-            { now }
+            { now.truncatedTo(ChronoUnit.MICROS) }
         )
 
         assertThat(actual.get()).usingRecursiveComparison(RecursiveComparisonConfiguration().apply { ignoreFields("id") }).isEqualTo(aMultiLineQuote(at = now) {
