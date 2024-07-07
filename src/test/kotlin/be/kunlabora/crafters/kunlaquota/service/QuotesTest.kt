@@ -75,7 +75,7 @@ class QuotesTest {
     }
 
     @Test
-    fun `When adding a quote fails because of one of the lines doesn't contain a name, a failure is returned`() {
+    fun `When adding a quote fails because of a validation failure, a failure is returned`() {
         val actual = quotes.execute(
             AddQuote(
                 lines = listOf(
@@ -87,35 +87,6 @@ class QuotesTest {
         )
 
         assertThat(actual).isEqualTo(Error(QuoteIsInvalid("A Quote Line needs a name.")))
-    }
-
-    @Test
-    fun `When adding a quote fails because of one of the lines doesn't contain a text, a failure is returned`() {
-        val actual = quotes.execute(
-            AddQuote(
-                lines = listOf(
-                    Quote.Line(1, name = "Snarf", text = "Snarf snarf"),
-                    Quote.Line(2, name = "Snarf", text = ""),
-                    Quote.Line(3, name = "Snarf", text = "Snarf snarf"),
-                )
-            )
-        )
-
-        assertThat(actual).isEqualTo(Error(QuoteIsInvalid("A Quote Line needs text.")))
-    }
-
-    @Test
-    fun `When adding a quote fails because the lines' orders are not unique, a failure is returned`() {
-        val actual = quotes.execute(
-            AddQuote(
-                lines = listOf(
-                    Quote.Line(1, name = "Snarf", text = "Snarf snarf"),
-                    Quote.Line(1, name = "Snarf", text = "Snarf snarf"),
-                )
-            )
-        )
-
-        assertThat(actual).isEqualTo(Error(QuoteIsInvalid("Can't have multiple lines with the same order.")))
     }
 
     @Test

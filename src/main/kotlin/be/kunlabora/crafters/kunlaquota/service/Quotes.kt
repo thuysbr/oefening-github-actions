@@ -2,7 +2,6 @@ package be.kunlabora.crafters.kunlaquota.service
 
 import be.kunlabora.crafters.kunlaquota.AddFailure
 import be.kunlabora.crafters.kunlaquota.FetchQuotesFailed
-import be.kunlabora.crafters.kunlaquota.QuoteIsInvalid
 import be.kunlabora.crafters.kunlaquota.ShareFailure
 import be.kunlabora.crafters.kunlaquota.service.Result.Error
 import be.kunlabora.crafters.kunlaquota.service.Result.Ok
@@ -50,19 +49,4 @@ class Quotes(
             quotes.filter { it.id == foundQuoteId }
         }
     }
-
-    private fun AddQuote.validate(): Result<AddFailure, AddQuote> =
-        when {
-            someLinesHaveSameOrder() -> Error(QuoteIsInvalid("Can't have multiple lines with the same order."))
-            someLinesHaveNoName() -> Error(QuoteIsInvalid("A Quote Line needs a name."))
-            someLinesHaveNoText() -> Error(QuoteIsInvalid("A Quote Line needs text."))
-            else -> Ok(this)
-        }
-
-    private fun AddQuote.someLinesHaveSameOrder() =
-        this.lines.map { it.order }.toSet().size < this.lines.size
-    private fun AddQuote.someLinesHaveNoName() =
-        this.lines.any { line -> line.name.isEmpty() }
-    private fun AddQuote.someLinesHaveNoText() =
-        this.lines.any { line -> line.text.isEmpty() }
 }

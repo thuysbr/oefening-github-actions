@@ -1,5 +1,7 @@
 package be.kunlabora.crafters.kunlaquota.service
 
+import be.kunlabora.crafters.kunlaquota.AddFailure
+import be.kunlabora.crafters.kunlaquota.QuoteIsInvalid
 import be.kunlabora.crafters.kunlaquota.service.Result.Error
 import be.kunlabora.crafters.kunlaquota.service.Result.Ok
 import be.kunlabora.crafters.kunlaquota.service.domain.Quote
@@ -8,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 import java.util.*
 
 typealias IdProvider = () -> String
+
 val uuidStringProvider: IdProvider = { UUID.randomUUID().toString() }
 
 @Suppress("unused")
@@ -15,6 +18,7 @@ class EntityId<E> private constructor(val value: String) {
     companion object {
         fun <E> new(idProvider: IdProvider = uuidStringProvider): EntityId<E> =
             EntityId(idProvider())
+
         fun <E> fromString(value: String): EntityId<E> = EntityId(UUID.fromString(value).toString())
     }
 
@@ -35,8 +39,25 @@ class EntityId<E> private constructor(val value: String) {
 //marker interface
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME)
 sealed interface Command
-data class AddQuote(val lines: List<Quote.Line>): Command
-data class ShareQuote(val id: QuoteId): Command
+data class AddQuote(val lines: List<Quote.Line>) : Command {
+    fun validate(): Result<AddFailure, AddQuote> = when {
+        someLinesHaveSameOrder() -> Error(QuoteIsInvalid("Can't have multiple lines with the same order."))
+        someLinesHaveNoName() -> Error(QuoteIsInvalid("A Quote Line needs a name."))
+        someLinesHaveNoText() -> Error(QuoteIsInvalid("A Quote Line needs text."))
+        else -> Ok(this)
+    }
+
+    private fun AddQuote.someLinesHaveSameOrder() =
+        this.lines.map { it.order }.toSet().size < this.lines.size
+
+    private fun AddQuote.someLinesHaveNoName() =
+        this.lines.any { line -> line.name.isEmpty() }
+
+    private fun AddQuote.someLinesHaveNoText() =
+        this.lines.any { line -> line.text.isEmpty() }
+}
+
+data class ShareQuote(val id: QuoteId) : Command
 
 sealed class Result<out F, out T> {
     data class Error<F>(val value: F) : Result<F, Nothing>()
