@@ -10,7 +10,7 @@ resource "aws_ecs_task_definition" "kunlaquota" {
   container_definitions = jsonencode([
     {
       name  = "kunlaquota"
-      image = "${aws_ecr_repository.kunlaquota.repository_url}:latest"
+      image = "${aws_ecr_repository.kunlaquota.repository_url}:0.0.1-SNAPSHOT"
       essential = true
       portMappings = [
         {
