@@ -22,7 +22,7 @@ class AddQuoteTest {
     }
 
     @Test
-    fun `When adding a quote fails because of one of the lines doesn't contain a text, a failure is returned`() {
+    fun `AddQuote does not validate when one of the lines doesn't contain a text`() {
         val result = AddQuote(
             lines = listOf(
                 Quote.Line(1, name = "Snarf", text = "Snarf snarf"),
@@ -35,7 +35,7 @@ class AddQuoteTest {
     }
 
     @Test
-    fun `When adding a quote fails because the lines' orders are not unique, a failure is returned`() {
+    fun `AddQuote does not validate when the lines' orders are not unique`() {
         val result = AddQuote(
             lines = listOf(
                 Quote.Line(1, name = "Snarf", text = "Snarf snarf"),
@@ -45,4 +45,37 @@ class AddQuoteTest {
 
         assertThat(result).isEqualTo(Error(QuoteIsInvalid("Can't have multiple lines with the same order.")))
     }
+
+    @Test
+    fun `AddQuote does not validate when all of the lines are blank`() {
+        val result = AddQuote(
+            lines = listOf(
+                Quote.Line(1, name = "", text = ""),
+            )
+        ).validate()
+
+        assertThat(result).isEqualTo(Error(QuoteIsInvalid("A Quote needs at least one Line.")))
+    }
+
+    @Test
+    fun `AddQuote validation ignores completely blank lines and cleans it`() {
+        val result = AddQuote(
+            lines = listOf(
+                Quote.Line(1, name = "Snarf", text = "Snarf snarf"),
+                Quote.Line(2, name = "", text = ""),
+                Quote.Line(3, name = "Snarf", text = "Snarf snarf"),
+            )
+        ).validate()
+
+        assertThat(result).isEqualTo(Result.Ok(
+            AddQuote(
+                lines = listOf(
+                    Quote.Line(1, name = "Snarf", text = "Snarf snarf"),
+                    Quote.Line(2, name = "Snarf", text = "Snarf snarf"),
+                )
+            )
+        ))
+    }
+
+
 }
