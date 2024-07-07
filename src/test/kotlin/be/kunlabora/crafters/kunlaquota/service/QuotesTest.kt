@@ -7,6 +7,7 @@ import be.kunlabora.crafters.kunlaquota.data.QuoteRepositoryFake
 import be.kunlabora.crafters.kunlaquota.service.Result.Error
 import be.kunlabora.crafters.kunlaquota.service.domain.*
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 
@@ -87,6 +88,26 @@ class QuotesTest {
         )
 
         assertThat(actual).isEqualTo(Error(QuoteIsInvalid("A Quote Line needs a name.")))
+    }
+
+    @Test
+    fun `When adding a quote, completely empty lines get ignored`() {
+        val now = LocalDateTime.now()
+        val actual = quotes.execute(
+            AddQuote(
+                lines = listOf(
+                    Quote.Line(1, name = "Snarf", text = "Snarf snarf"),
+                    Quote.Line(2, name = "", text = ""),
+                    Quote.Line(3, name = "Moonshine", text = "Watch a bitch call lightning"),
+                )
+            ),
+            { now }
+        )
+
+        assertThat(actual.get()).usingRecursiveComparison(RecursiveComparisonConfiguration().apply { ignoreFields("id") }).isEqualTo(aMultiLineQuote(at = now) {
+            "Snarf" said "Snarf snarf"
+            "Moonshine" said "Watch a bitch call lightning"
+        })
     }
 
     @Test

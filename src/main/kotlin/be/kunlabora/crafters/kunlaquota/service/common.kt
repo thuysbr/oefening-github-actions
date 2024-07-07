@@ -40,6 +40,19 @@ class EntityId<E> private constructor(val value: String) {
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME)
 sealed interface Command
 data class AddQuote(val lines: List<Quote.Line>) : Command {
+
+    fun clean(): AddQuote = copy(
+        lines = lines.dropBlankLines().reindex()
+    )
+
+    private fun List<Quote.Line>.dropBlankLines() =
+        filterNot { it.name.isBlank() && it.text.isBlank() }
+
+    private fun List<Quote.Line>.reindex() =
+        sortedBy { it.order }
+            .mapIndexed { index, line -> line.copy(order = index + 1) }
+
+
     fun validate(): Result<AddFailure, AddQuote> = when {
         someLinesHaveSameOrder() -> Error(QuoteIsInvalid("Can't have multiple lines with the same order."))
         someLinesHaveNoName() -> Error(QuoteIsInvalid("A Quote Line needs a name."))

@@ -27,6 +27,7 @@ class Quotes(
 
     override fun execute(addQuote: AddQuote, dateProvider: () -> LocalDateTime): Result<AddFailure, Quote> =
         addQuote
+            .clean()
             .validate()
             .flatMap { validatedAddQuote ->
                 Quote(id = QuoteId.new(), at = dateProvider(), lines = validatedAddQuote.lines).store()
