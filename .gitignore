@@ -38,3 +38,9 @@ out/
 
 ### Kotlin ###
 .kotlin
+/ops/terraform/.terraform/
+/ops/terraform/.terraform.lock.hcl
+/ops/terraform/.terraform.tfstate.lock.info
+/ops/terraform/terraform.tfstate
+/ops/terraform/terraform.tfstate.backup
+/ops/terraform/tfplan

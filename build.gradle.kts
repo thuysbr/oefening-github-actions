@@ -1,6 +1,7 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
 
 plugins {
 	val kotlinVersion = "2.0.0"
@@ -53,4 +54,8 @@ tasks.withType<Test> {
 		events.addAll(listOf(TestLogEvent.FAILED, TestLogEvent.SKIPPED))
 		exceptionFormat = TestExceptionFormat.FULL
 	}
+}
+
+tasks.named<BootBuildImage>("bootBuildImage") {
+	//TODO: configure build image name and use that in docker-compose.yml
 }
