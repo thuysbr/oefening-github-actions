@@ -10,7 +10,7 @@ resource "aws_vpc" "main" {
 resource "aws_subnet" "subnet_a" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.0.1.0/24"
-  availability_zone = "eu-west-1a"
+  availability_zone = "eu-central-1a"
 
   tags = {
     Owner: "TimS"
@@ -21,7 +21,7 @@ resource "aws_subnet" "subnet_a" {
 resource "aws_subnet" "subnet_b" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.0.2.0/24"
-  availability_zone = "eu-west-1b"
+  availability_zone = "eu-central-1b"
 
   tags = {
     Owner: "TimS"
@@ -78,3 +78,11 @@ resource "aws_route_table_association" "b" {
 #   }
 }
 
+resource "aws_vpc_endpoint" "secretsmanager" {
+  vpc_id            = aws_vpc.main.id
+  service_name      = "com.amazonaws.eu-central-1.secretsmanager"
+  vpc_endpoint_type = "Interface"
+  subnet_ids        = [aws_subnet.subnet_a.id, aws_subnet.subnet_b.id]
+
+  security_group_ids = [aws_security_group.ecs.id]
+}
