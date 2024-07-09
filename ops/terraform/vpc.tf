@@ -1,6 +1,9 @@
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
 
+  enable_dns_hostnames = true
+  enable_dns_support = true
+
   tags = {
     Owner: "TimS"
     Name: "tims-kunlaquota-vps"
@@ -78,11 +81,42 @@ resource "aws_route_table_association" "b" {
 #   }
 }
 
-resource "aws_vpc_endpoint" "secretsmanager" {
-  vpc_id            = aws_vpc.main.id
-  service_name      = "com.amazonaws.eu-central-1.secretsmanager"
-  vpc_endpoint_type = "Interface"
-  subnet_ids        = [aws_subnet.subnet_a.id, aws_subnet.subnet_b.id]
 
-  security_group_ids = [aws_security_group.ecs.id]
+resource "aws_vpc_endpoint" "ssm" {
+  vpc_id       = aws_vpc.main.id
+  service_name = "com.amazonaws.eu-central-1.ssm"
+  subnet_ids   = [aws_subnet.subnet_a.id, aws_subnet.subnet_b.id]
+  vpc_endpoint_type = "Interface"
+
+  private_dns_enabled = true
+
+  tags = {
+    Name = "ssm-endpoint"
+  }
+}
+
+resource "aws_vpc_endpoint" "ssmmessages" {
+  vpc_id       = aws_vpc.main.id
+  service_name = "com.amazonaws.eu-central-1.ssmmessages"
+  subnet_ids   = [aws_subnet.subnet_a.id, aws_subnet.subnet_b.id]
+  vpc_endpoint_type = "Interface"
+
+  private_dns_enabled = true
+
+  tags = {
+    Name = "ssm-messages-endpoint"
+  }
+}
+
+resource "aws_vpc_endpoint" "ec2messages" {
+  vpc_id       = aws_vpc.main.id
+  service_name = "com.amazonaws.eu-central-1.ec2messages"
+  subnet_ids   = [aws_subnet.subnet_a.id, aws_subnet.subnet_b.id]
+  vpc_endpoint_type = "Interface"
+
+  private_dns_enabled = true
+
+  tags = {
+    Name = "ec2-messages-endpoint"
+  }
 }

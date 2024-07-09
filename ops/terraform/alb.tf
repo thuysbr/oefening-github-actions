@@ -51,15 +51,3 @@ resource "aws_lb_target_group" "app_lb_tg" {
     Name: "tims-kunlaquota-alb-target-group"
   }
 }
-
-# resource "aws_lb_target_group_attachment" "ecs_tg_attachment" {
-#   target_group_arn = aws_lb_target_group.app_lb_tg.arn
-#   target_id        = aws_ecs_service.kunlaquota.task_definition
-##   target_id        = aws_ecs_task_definition.kunlaquota.arn
-#   port             = 8080
-#
-##   tags = {
-##     Owner: "TimS"
-##     Name: "tims-kunlaquota-lb-target-group-attach"
-##   }
-# }

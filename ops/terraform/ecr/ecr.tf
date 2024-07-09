@@ -1,3 +1,7 @@
+provider "aws" {
+  region = "eu-central-1"
+}
+
 resource "aws_ecr_repository" "kunlaquota" {
   name                 = "kunlaquota-repo"
   image_tag_mutability = "MUTABLE"
@@ -9,4 +13,8 @@ resource "aws_ecr_repository" "kunlaquota" {
     Owner: "TimS"
     Name: "tims-kunlaquota-ecr"
   }
+}
+
+output "ecr_repository_url" {
+  value = aws_ecr_repository.kunlaquota.repository_url
 }

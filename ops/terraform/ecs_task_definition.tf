@@ -1,3 +1,4 @@
+
 resource "aws_ecs_task_definition" "kunlaquota" {
   family                   = "springboot-task"
   network_mode             = "awsvpc"
@@ -10,7 +11,7 @@ resource "aws_ecs_task_definition" "kunlaquota" {
   container_definitions = jsonencode([
     {
       name  = "kunlaquota"
-      image = "${aws_ecr_repository.kunlaquota.repository_url}:0.0.1-SNAPSHOT"
+      image = "${data.aws_ecr_repository.kunlaquota.repository_url}:0.0.1-SNAPSHOT"
       essential = true
       portMappings = [
         {
@@ -21,17 +22,17 @@ resource "aws_ecs_task_definition" "kunlaquota" {
       environment = [
         {
           name  = "SPRING_DATASOURCE_URL"
-          value = "jdbc:postgres://pg-1337quota-kunlaquota.k.aivencloud.com:26279/defaultdb?sslmode=require"
+          value = "jdbc:postgres://${aws_db_instance.kunlaquotadb.endpoint}:5432/kunlaquota"
         },
       ]
       secrets = [
         {
           name      = "SPRING_DATASOURCE_USERNAME"
-          valueFrom = "arn:aws:secretsmanager:eu-central-1:812958718504:secret:AivenDBCredentials-oKa7hU:username::"
+          valueFrom = aws_db_instance.kunlaquotadb.username
         },
         {
           name      = "SPRING_DATASOURCE_PASSWORD"
-          valueFrom = "arn:aws:secretsmanager:eu-central-1:812958718504:secret:AivenDBCredentials-oKa7hU:password::"
+          valueFrom = aws_db_instance.kunlaquotadb.password
         }
       ]
     }
@@ -43,3 +44,6 @@ resource "aws_ecs_task_definition" "kunlaquota" {
   }
 }
 
+data "aws_ecr_repository" "kunlaquota" {
+  name = "kunlaquota-repo"
+}
