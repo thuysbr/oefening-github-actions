@@ -1,6 +1,5 @@
 package be.kunlabora.crafters.kunlaquota.web.ui.screens
 
-import be.kunlabora.crafters.kunlaquota.service.IQuotes
 import be.kunlabora.crafters.kunlaquota.service.domain.Quote
 import be.kunlabora.crafters.kunlaquota.web.ui.baseUiUrl
 import be.kunlabora.crafters.kunlaquota.web.ui.components.Htmx.hxGet
@@ -13,12 +12,11 @@ import kotlinx.html.*
 import java.time.LocalDateTime
 
 object ShowQuotesScreen {
-    fun FlowContent.showQuotes(quotes: IQuotes) {
+    fun FlowContent.showQuotes(allQuotes: List<Quote>) {
         section(classes = "section") {
             id = "quote-section"
             div(classes = "container") {
-                quotes.findAll()
-                    .map { fetchedQuotes -> fetchedQuotes.forEach { quote(it) } }
+                allQuotes.forEach { quote(it) }
             }
         }
 

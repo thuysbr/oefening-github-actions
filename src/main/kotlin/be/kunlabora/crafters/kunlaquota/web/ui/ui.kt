@@ -3,6 +3,7 @@ package be.kunlabora.crafters.kunlaquota.web.ui
 import be.kunlabora.crafters.kunlaquota.service.AddQuote
 import be.kunlabora.crafters.kunlaquota.service.IQuotes
 import be.kunlabora.crafters.kunlaquota.service.domain.Quote
+import be.kunlabora.crafters.kunlaquota.service.domain.QuoteShare
 import be.kunlabora.crafters.kunlaquota.service.get
 import be.kunlabora.crafters.kunlaquota.web.ui.components.Hero.hero
 import be.kunlabora.crafters.kunlaquota.web.ui.screens.AddQuoteModal.addQuoteLine
@@ -13,8 +14,10 @@ import kotlinx.html.*
 import kotlinx.html.stream.appendHTML
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.web.servlet.function.RequestPredicates
 import org.springframework.web.servlet.function.RouterFunctionDsl
 import org.springframework.web.servlet.function.ServerResponse
+import org.springframework.web.servlet.function.paramOrNull
 import java.io.StringWriter
 
 const val baseUiUrl = "/ui"
@@ -26,7 +29,8 @@ fun uiRoutes(quotes: IQuotes): RouterFunctionDsl.() -> Unit = {
             .contentType(MediaType.TEXT_HTML)
             .body(
                 wrapper(title) {
-                    showQuotes(quotes)
+                    quotes.findAll()
+                        .map { quotes -> showQuotes(quotes) }
                 }
             )
     }
@@ -57,6 +61,19 @@ fun uiRoutes(quotes: IQuotes): RouterFunctionDsl.() -> Unit = {
                 ServerResponse.status(HttpStatus.OK)
                     .header("HX-Redirect", baseUiUrl)
                     .build()
+            }.recover { failure ->
+                ServerResponse.status(HttpStatus.OK)
+                    .body(partial { errorMessage("Oopsie! Something broke!", failure.message) })
+            }.get()
+    }
+    GET(RequestPredicates.param("share") { true }) { request ->
+        val quoteShare = QuoteShare(request.paramOrNull("share")!!)
+        quotes.findByQuoteShare(quoteShare)
+            .map { quotes ->
+                ServerResponse.status(HttpStatus.OK)
+                    .body(wrapper("Shared quote: ${quoteShare.value}") {
+                        showQuotes(quotes)
+                    })
             }.recover { failure ->
                 ServerResponse.status(HttpStatus.OK)
                     .body(partial { errorMessage("Oopsie! Something broke!", failure.message) })
