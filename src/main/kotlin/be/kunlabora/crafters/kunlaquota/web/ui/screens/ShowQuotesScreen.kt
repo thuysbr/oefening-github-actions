@@ -16,7 +16,9 @@ object ShowQuotesScreen {
         section(classes = "section") {
             id = "quote-section"
             div(classes = "container") {
-                allQuotes.forEach { quote(it) }
+                if (allQuotes.isEmpty()) {
+                    + "Be the first to create a new quote!"
+                }else allQuotes.forEach { quote(it) }
             }
         }
 
