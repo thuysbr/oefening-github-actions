@@ -46,7 +46,24 @@ class Quotes(
             is Error -> null
         }
         return quoteRepository.findAll().map { quotes ->
-            quotes.filter { it.id == foundQuoteId }
+            if (foundQuoteId !in quotes.map { it.id }) emptyList()
+            else { //the else block is the main thing, but it's nested
+                val foundQuoteIdx = quotes.indexOfFirst { it.id == foundQuoteId }
+                //feels like there's some kind of symmetry
+                val lastIdx = if (foundQuoteIdx + 1 > quotes.size - 1) foundQuoteIdx else foundQuoteIdx + 1
+                val firstIdx = if (foundQuoteIdx - 1 < 0) foundQuoteIdx else foundQuoteIdx - 1
+
+                val firstQuote = quotes[firstIdx]
+                val sharedQuote = quotes[foundQuoteIdx]
+                val lastQuote = quotes[lastIdx]
+
+                val option = setOf(firstQuote, sharedQuote, lastQuote).toList()
+                val result = if (option.size == 3) option
+                else if (option[0].id == sharedQuote.id) option + quotes.getOrNull(foundQuoteIdx + 2)
+                else if (option[1].id == sharedQuote.id) option + quotes.getOrNull(foundQuoteIdx - 2)
+                else emptyList() //sign that conditional is not exhaustive, because we shouldn't ever be in this case
+                result.filterNotNull().sortedByDescending { it.at } //we have to sort again
+            }
         }
     }
 }

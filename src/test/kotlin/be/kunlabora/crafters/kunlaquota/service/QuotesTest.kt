@@ -156,13 +156,67 @@ class QuotesTest {
     }
 
     @Test
-    fun `When retrieving quotes for a QuoteShare, a list with one Quote is returned if a Quote for that QuoteShare could be found`() {
+    fun `When retrieving quotes for a QuoteShare, a list with the surrounding Quotes is returned if a Quote for that QuoteShare could be found`() {
         val quoteId = QuoteId.fromString<Quote>("749aa702-046d-44e1-b600-e7cefa1299e0")
+        aSingleLineQuote().save()
+        val olderSurroundingQuote = aSingleLineQuote().save()
         val sharedQuote = aSingleLineQuote(quoteId = quoteId).save()
+        val moreRecentSurroundingQuote = aSingleLineQuote().save()
+        aSingleLineQuote().save()
         quotes.execute(ShareQuote(id = quoteId))
 
         quotes.findByQuoteShare(QuoteShare("GIQYTPQ"))
-            .also { assertThat(it).isEqualTo(Result.Ok(listOf(sharedQuote))) }
+            .also { assertThat(it).isEqualTo(Result.Ok(listOf(moreRecentSurroundingQuote, sharedQuote, olderSurroundingQuote))) }
+    }
+
+    @Test
+    fun `When retrieving quotes for a QuoteShare, and the shared quote is the oldest one, a list with 3 surrounding Quotes is returned`() {
+        val quoteId = QuoteId.fromString<Quote>("749aa702-046d-44e1-b600-e7cefa1299e0")
+        val sharedQuote = aSingleLineQuote(quoteId = quoteId, text="shared").save()
+        val moreRecentSurroundQuote = aSingleLineQuote(text="older").save()
+        val mostRecentSurroundingQuote = aSingleLineQuote(text="more recent").save()
+        aSingleLineQuote().save()
+        aSingleLineQuote().save()
+        quotes.execute(ShareQuote(id = quoteId))
+
+        quotes.findByQuoteShare(QuoteShare("GIQYTPQ"))
+            .also { assertThat(it).isEqualTo(Result.Ok(listOf(mostRecentSurroundingQuote, moreRecentSurroundQuote, sharedQuote))) }
+    }
+
+    @Test
+    fun `When retrieving quotes for a QuoteShare, and the shared quote is the most recent one, a list with 3 surrounding Quotes is returned`() {
+        val quoteId = QuoteId.fromString<Quote>("749aa702-046d-44e1-b600-e7cefa1299e0")
+        aSingleLineQuote().save()
+        aSingleLineQuote().save()
+        val oldestSurroundingQuote = aSingleLineQuote(text="older").save()
+        val olderSurroundingQuote = aSingleLineQuote(text="more recent").save()
+        val sharedQuote = aSingleLineQuote(quoteId = quoteId, text="shared").save()
+        quotes.execute(ShareQuote(id = quoteId))
+
+        quotes.findByQuoteShare(QuoteShare("GIQYTPQ"))
+            .also { assertThat(it).isEqualTo(Result.Ok(listOf(sharedQuote, olderSurroundingQuote, oldestSurroundingQuote))) }
+    }
+
+    @Test
+    fun `When retrieving quotes for a QuoteShare, there are only 2 quotes and the shared quote is the most recent one, a list with 2 surrounding Quotes is returned`() {
+        val quoteId = QuoteId.fromString<Quote>("749aa702-046d-44e1-b600-e7cefa1299e0")
+        val olderSurroundingQuote = aSingleLineQuote(text="older").save()
+        val sharedQuote = aSingleLineQuote(quoteId = quoteId, text="shared").save()
+        quotes.execute(ShareQuote(id = quoteId))
+
+        quotes.findByQuoteShare(QuoteShare("GIQYTPQ"))
+            .also { assertThat(it).isEqualTo(Result.Ok(listOf(sharedQuote, olderSurroundingQuote))) }
+    }
+
+    @Test
+    fun `When retrieving quotes for a QuoteShare, there are only 2 quotes and the shared quote is the oldest one, a list with 2 surrounding Quotes is returned`() {
+        val quoteId = QuoteId.fromString<Quote>("749aa702-046d-44e1-b600-e7cefa1299e0")
+        val sharedQuote = aSingleLineQuote(quoteId = quoteId, text="shared").save()
+        val moreRecentSurroundingQuote = aSingleLineQuote(text="more recent").save()
+        quotes.execute(ShareQuote(id = quoteId))
+
+        quotes.findByQuoteShare(QuoteShare("GIQYTPQ"))
+            .also { assertThat(it).isEqualTo(Result.Ok(listOf(moreRecentSurroundingQuote, sharedQuote))) }
     }
 
     @Test

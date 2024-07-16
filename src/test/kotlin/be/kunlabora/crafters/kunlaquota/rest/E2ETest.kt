@@ -122,7 +122,39 @@ class E2ETest(
         restTemplate.postForLocation(
             "/api/quote", AddQuote(
                 listOf(
+                    Quote.Line(1, "Snarf", "Snarf!"),
+                )
+            )
+        )
+        restTemplate.postForLocation(
+            "/api/quote", AddQuote(
+                listOf(
+                    Quote.Line(1, "deSabbe", "CLOSER!"),
+                )
+            )
+        )
+
+        //quote we want to share
+        restTemplate.postForLocation(
+            "/api/quote", AddQuote(
+                listOf(
                     Quote.Line(1, "Lion-o", "STFU Snarf!"),
+                )
+            )
+        )
+
+
+        restTemplate.postForLocation(
+            "/api/quote", AddQuote(
+                listOf(
+                    Quote.Line(1, "Amarth86", "What is AWS doing when creating an RDS? Getting the bytes fresh from the amazon forest?"),
+                )
+            )
+        )
+        restTemplate.postForLocation(
+            "/api/quote", AddQuote(
+                listOf(
+                    Quote.Line(1, "Kiba", "WOOF!"),
                 )
             )
         )
@@ -136,7 +168,7 @@ class E2ETest(
         val sharedQuoteResponse =
             restTemplate.exchange<List<Quote>>("/api/quote?share=$expectedQuoteShareId", HttpMethod.GET)
 
-        assertThat(sharedQuoteResponse.body?.first()?.id).isEqualTo(sharedQuoteId)
+        assertThat(sharedQuoteResponse.body?.get(2)?.id).isEqualTo(sharedQuoteId)
     }
 }
 
