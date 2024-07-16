@@ -56,19 +56,11 @@ class Quotes(
         foundQuoteId: QuoteId?
     ): List<Quote> {
         val foundQuoteIdx = quotes.indexOfFirst { it.id == foundQuoteId }
-        //feels like there's some kind of symmetry
-        val lastIdx = if (foundQuoteIdx + 1 > quotes.size - 1) foundQuoteIdx else foundQuoteIdx + 1
-        val firstIdx = if (foundQuoteIdx - 1 < 0) foundQuoteIdx else foundQuoteIdx - 1
-
-        val firstQuote = quotes[firstIdx]
-        val sharedQuote = quotes[foundQuoteIdx]
-        val lastQuote = quotes[lastIdx]
-
-        val option = setOf(firstQuote, sharedQuote, lastQuote).toList()
-        val result = if (option.size == 3) option
-        else if (option.size == 2 && option[0].id == sharedQuote.id) option + quotes.getOrNull(foundQuoteIdx + 2)
-        else option + quotes.getOrNull(foundQuoteIdx - 2)
-        return result.filterNotNull().sortedByDescending { it.at } //we have to sort again
+        return when {
+            foundQuoteIdx == 0 -> quotes.take(3)
+            foundQuoteIdx == quotes.size -1 -> quotes.takeLast(3)
+            foundQuoteIdx > 0 && foundQuoteIdx < quotes.size -1 -> listOf(quotes[foundQuoteIdx-1], quotes[foundQuoteIdx], quotes[foundQuoteIdx+1])
+            else -> error("stuff blew up")
+        }
     }
-
 }
