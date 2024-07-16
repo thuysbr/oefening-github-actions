@@ -2,6 +2,7 @@ package be.kunlabora.crafters.kunlaquota.web.ui
 
 import be.kunlabora.crafters.kunlaquota.service.AddQuote
 import be.kunlabora.crafters.kunlaquota.service.IQuotes
+import be.kunlabora.crafters.kunlaquota.service.SurroundingQuotesSize
 import be.kunlabora.crafters.kunlaquota.service.domain.Quote
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteShare
 import be.kunlabora.crafters.kunlaquota.service.get
@@ -68,7 +69,7 @@ fun uiRoutes(quotes: IQuotes): RouterFunctionDsl.() -> Unit = {
     }
     GET(RequestPredicates.param("share") { true }) { request ->
         val quoteShare = QuoteShare(request.paramOrNull("share")!!)
-        quotes.findByQuoteShare(quoteShare)
+        quotes.findByQuoteShare(quoteShare, SurroundingQuotesSize(3))
             .map { quotes ->
                 ServerResponse.status(HttpStatus.OK)
                     .body(wrapper("Shared quote: ${quoteShare.value}") {

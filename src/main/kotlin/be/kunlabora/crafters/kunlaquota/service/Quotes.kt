@@ -16,7 +16,7 @@ interface IQuotes {
 
     fun execute(shareQuote: ShareQuote): Result<ShareFailure, QuoteShare>
     fun findAll(): Result<FetchQuotesFailed, List<Quote>>
-    fun findByQuoteShare(quoteShare: QuoteShare): Result<FetchQuotesFailed, List<Quote>>
+    fun findByQuoteShare(quoteShare: QuoteShare, surroundingQuotesSize: SurroundingQuotesSize): Result<FetchQuotesFailed, List<Quote>>
 }
 
 class Quotes(
@@ -40,23 +40,47 @@ class Quotes(
 
     override fun findAll(): Result<FetchQuotesFailed, List<Quote>> = quoteRepository.findAll()
 
-    override fun findByQuoteShare(quoteShare: QuoteShare): Result<FetchQuotesFailed, List<Quote>> {
+    override fun findByQuoteShare(
+        quoteShare: QuoteShare,
+        surroundingQuotesSize: SurroundingQuotesSize
+    ): Result<FetchQuotesFailed, List<Quote>> {
         return when (val quoteShareResult = quoteShareRepository.findBy(quoteShare)) {
-            is Ok -> quoteRepository.findAll().map { quotes -> fetchSurroundingQuotes(quotes, quoteShareResult.value) }
+            is Ok -> quoteRepository.findAll().map { quotes ->
+                quotes.fetchSurroundingQuotes(quoteShareResult.value, surroundingQuotesSize)
+            }
             is Error -> Ok(emptyList())
         }
     }
 
-    private fun fetchSurroundingQuotes(
-        quotes: List<Quote>,
-        foundQuoteId: QuoteId?
+    private fun List<Quote>.fetchSurroundingQuotes(
+        foundQuoteId: QuoteId?,
+        surroundingQuotesSize: SurroundingQuotesSize
     ): List<Quote> {
-        val foundQuoteIdx = quotes.indexOfFirst { it.id == foundQuoteId }
+        val foundQuoteIdx = indexOfFirst { it.id == foundQuoteId }
+        val surroundingIndexes = surroundingQuotesSize.surroundingIndexes(foundQuoteIdx)
         return when (foundQuoteIdx) {
             -1 -> emptyList()
-            0 -> quotes.take(3)
-            quotes.size -1 -> quotes.takeLast(3)
-            else -> listOf(quotes[foundQuoteIdx-1], quotes[foundQuoteIdx], quotes[foundQuoteIdx+1])
+            0 -> take(surroundingQuotesSize.value)
+            size - 1 -> takeLast(surroundingQuotesSize.value)
+            else -> surroundingIndexes.mapNotNull { this.getOrNull(it) }.let {
+                if (it.size == surroundingQuotesSize.value) it
+                else it.fetchSurroundingQuotes(foundQuoteId, surroundingQuotesSize.nextLowerSurroundingSize())
+            }
         }
     }
+}
+
+@JvmInline
+value class SurroundingQuotesSize(val value: Int) {
+    init {
+        require(value % 2 == 1) { "SurroundingQuotesSize should always be odd." }
+        require(value > 0) { "SurroundingQuotesSize should be strictly more than 0." }
+    }
+
+    fun nextLowerSurroundingSize() = SurroundingQuotesSize((this.value / 2) + 1)
+    fun surroundingIndexes(idx: Int): List<Int> =
+        (this.value / 2).let { maxExtent ->
+            (maxExtent.negated()..maxExtent).map { idx + it }
+        }
+    private fun Int.negated() = (this * -1)
 }

@@ -17,7 +17,10 @@ fun apiRoutes(quotes: IQuotes): RouterFunctionDsl.() -> Unit = {
 
     "/quote".nest {
         GET(RequestPredicates.param("share") { true }) { request ->
-            quotes.findByQuoteShare(QuoteShare(request.paramOrNull("share")!!))
+            quotes.findByQuoteShare(
+                QuoteShare(request.paramOrNull("share")!!),
+                SurroundingQuotesSize(3)
+            )
                 .map { foundQuotes ->
                     ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)

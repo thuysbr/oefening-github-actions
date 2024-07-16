@@ -1,10 +1,7 @@
 package be.kunlabora.crafters.kunlaquota.rest
 
 import be.kunlabora.crafters.kunlaquota.*
-import be.kunlabora.crafters.kunlaquota.service.AddQuote
-import be.kunlabora.crafters.kunlaquota.service.IQuotes
-import be.kunlabora.crafters.kunlaquota.service.Result
-import be.kunlabora.crafters.kunlaquota.service.ShareQuote
+import be.kunlabora.crafters.kunlaquota.service.*
 import be.kunlabora.crafters.kunlaquota.service.domain.Quote
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteShare
 import be.kunlabora.crafters.kunlaquota.web.WebConfig
@@ -43,7 +40,7 @@ class FakeConfig {
             return Result.Error(FetchQuotesFailed)
         }
 
-        override fun findByQuoteShare(quoteShare: QuoteShare): Result<FetchQuotesFailed, List<Quote>> {
+        override fun findByQuoteShare(quoteShare: QuoteShare, surroundingQuotesSize: SurroundingQuotesSize): Result<FetchQuotesFailed, List<Quote>> {
             return Result.Error(FetchQuotesFailed)
         }
     }
