@@ -41,13 +41,9 @@ class Quotes(
     override fun findAll(): Result<FetchQuotesFailed, List<Quote>> = quoteRepository.findAll()
 
     override fun findByQuoteShare(quoteShare: QuoteShare): Result<FetchQuotesFailed, List<Quote>> {
-        val foundQuoteId = when (val quoteShareResult = quoteShareRepository.findBy(quoteShare)) {
-            is Ok -> quoteShareResult.value
-            is Error -> null
-        }
-        return quoteRepository.findAll().map { quotes ->
-            if (foundQuoteId !in quotes.map { it.id }) emptyList()
-            else fetchSurroundingQuotes(quotes, foundQuoteId)
+        return when (val quoteShareResult = quoteShareRepository.findBy(quoteShare)) {
+            is Ok -> quoteRepository.findAll().map { quotes -> fetchSurroundingQuotes(quotes, quoteShareResult.value) }
+            is Error -> Ok(emptyList())
         }
     }
 
@@ -56,11 +52,11 @@ class Quotes(
         foundQuoteId: QuoteId?
     ): List<Quote> {
         val foundQuoteIdx = quotes.indexOfFirst { it.id == foundQuoteId }
-        return when {
-            foundQuoteIdx == 0 -> quotes.take(3)
-            foundQuoteIdx == quotes.size -1 -> quotes.takeLast(3)
-            foundQuoteIdx > 0 && foundQuoteIdx < quotes.size -1 -> listOf(quotes[foundQuoteIdx-1], quotes[foundQuoteIdx], quotes[foundQuoteIdx+1])
-            else -> error("stuff blew up")
+        return when (foundQuoteIdx) {
+            -1 -> emptyList()
+            0 -> quotes.take(3)
+            quotes.size -1 -> quotes.takeLast(3)
+            else -> listOf(quotes[foundQuoteIdx-1], quotes[foundQuoteIdx], quotes[foundQuoteIdx+1])
         }
     }
 }
