@@ -20,6 +20,8 @@ Find the stream [over here on Twitch](https://twitch.tv/livecodingwithsch3lp).
 * [x] Reading a SharedQuote returns the surrounding quotes (KQ-4.2)
 * [ ] ~~Do pattern matching on the Accept header: if it's application/json return json, otherwise return html~~
 * [ ] ResourceInitializationError: unable to pull secrets or registry auth: execution resource retrieval failed: unable to retrieve secrets from ssm: service call has been retried 5 time(s): RequestCanceled: request context canceled caused by: context deadline exceeded. Please check your task network configuration.
+* [x] Add share quote functionality to the UI
+* [ ] Show shared quotes more explicitly
 
 
 ## Quotes
