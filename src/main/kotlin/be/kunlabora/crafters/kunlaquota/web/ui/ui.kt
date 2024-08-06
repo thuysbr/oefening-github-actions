@@ -1,14 +1,13 @@
 package be.kunlabora.crafters.kunlaquota.web.ui
 
-import be.kunlabora.crafters.kunlaquota.service.AddQuote
-import be.kunlabora.crafters.kunlaquota.service.IQuotes
-import be.kunlabora.crafters.kunlaquota.service.SurroundingQuotesSize
+import be.kunlabora.crafters.kunlaquota.service.*
 import be.kunlabora.crafters.kunlaquota.service.domain.Quote
+import be.kunlabora.crafters.kunlaquota.service.domain.QuoteId
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteShare
-import be.kunlabora.crafters.kunlaquota.service.get
 import be.kunlabora.crafters.kunlaquota.web.ui.components.Hero.hero
 import be.kunlabora.crafters.kunlaquota.web.ui.screens.AddQuoteModal.addQuoteLine
 import be.kunlabora.crafters.kunlaquota.web.ui.screens.AddQuoteModal.addQuoteModal
+import be.kunlabora.crafters.kunlaquota.web.ui.screens.ShareQuoteModal.shareQuoteModal
 import be.kunlabora.crafters.kunlaquota.web.ui.screens.ShowQuotesScreen.errorMessage
 import be.kunlabora.crafters.kunlaquota.web.ui.screens.ShowQuotesScreen.showQuotes
 import kotlinx.html.*
@@ -24,6 +23,23 @@ import java.io.StringWriter
 const val baseUiUrl = "/ui"
 
 fun uiRoutes(quotes: IQuotes): RouterFunctionDsl.() -> Unit = {
+    GET(RequestPredicates.param("share") { it.isNotBlank() }) { request ->
+        val quoteShare = QuoteShare(request.paramOrNull("share")!!)
+        quotes.findByQuoteShare(quoteShare, SurroundingQuotesSize(3))
+            .map { quotes ->
+                ServerResponse.status(HttpStatus.OK)
+                    .contentType(MediaType.TEXT_HTML)
+                    .body(wrapper("Shared quote: ${quoteShare.value}") {
+                        showQuotes(quotes)
+                    })
+            }.recover { failure ->
+                ServerResponse.status(HttpStatus.OK)
+                    .contentType(MediaType.TEXT_HTML)
+                    .body(partial { errorMessage("Oopsie! Something broke!", failure.message) })
+            }.get()
+    }
+
+
     GET("") {
         val title = "KunlaQuota"
         ServerResponse.status(HttpStatus.OK)
@@ -46,6 +62,7 @@ fun uiRoutes(quotes: IQuotes): RouterFunctionDsl.() -> Unit = {
     }
     POST("new/addLine") {
         ServerResponse.status(HttpStatus.OK)
+            .contentType(MediaType.TEXT_HTML)
             .body(
                 partial { addQuoteLine() }
             )
@@ -67,16 +84,23 @@ fun uiRoutes(quotes: IQuotes): RouterFunctionDsl.() -> Unit = {
                     .body(partial { errorMessage("Oopsie! Something broke!", failure.message) })
             }.get()
     }
-    GET(RequestPredicates.param("share") { true }) { request ->
-        val quoteShare = QuoteShare(request.paramOrNull("share")!!)
-        quotes.findByQuoteShare(quoteShare, SurroundingQuotesSize(3))
-            .map { quotes ->
+
+    POST("share/{quoteId}") { request ->
+        val quoteId: QuoteId = request.pathVariable("quoteId").let { QuoteId.fromString(it) }
+        quotes.execute(ShareQuote(quoteId))
+            .map { quoteShare ->
+                val quoteShareUrl = request.uriBuilder().replacePath(baseUiUrl).queryParam("share",quoteShare.value).build()
+
                 ServerResponse.status(HttpStatus.OK)
-                    .body(wrapper("Shared quote: ${quoteShare.value}") {
-                        showQuotes(quotes)
-                    })
+                    .contentType(MediaType.TEXT_HTML)
+                    .body(
+                        partial {
+                            shareQuoteModal(quoteShareUrl)
+                        }
+                    )
             }.recover { failure ->
                 ServerResponse.status(HttpStatus.OK)
+                    .contentType(MediaType.TEXT_HTML)
                     .body(partial { errorMessage("Oopsie! Something broke!", failure.message) })
             }.get()
     }

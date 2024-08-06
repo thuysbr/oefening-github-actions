@@ -3,11 +3,13 @@ package be.kunlabora.crafters.kunlaquota.web.ui.screens
 import be.kunlabora.crafters.kunlaquota.service.domain.Quote
 import be.kunlabora.crafters.kunlaquota.web.ui.baseUiUrl
 import be.kunlabora.crafters.kunlaquota.web.ui.components.Htmx.hxGet
+import be.kunlabora.crafters.kunlaquota.web.ui.components.Htmx.hxPost
 import be.kunlabora.crafters.kunlaquota.web.ui.components.Htmx.hxTarget
 import be.kunlabora.crafters.kunlaquota.web.ui.components.Htmx.hyper
 import be.kunlabora.crafters.kunlaquota.web.ui.components.Util.formatToKunlaDate
 import be.kunlabora.crafters.kunlaquota.web.ui.path
 import be.kunlabora.crafters.kunlaquota.web.ui.screens.AddQuoteModal.addQuoteModalId
+import be.kunlabora.crafters.kunlaquota.web.ui.screens.ShareQuoteModal.shareQuoteModalId
 import kotlinx.html.*
 import java.time.LocalDateTime
 
@@ -54,6 +56,10 @@ object ShowQuotesScreen {
 
     private fun FlowContent.shareButton(quote: Quote) {
         button(classes = "btn btn-primary card-header-icon") {
+            hxPost = baseUiUrl.path("share", quote.id.value)
+            hxTarget = "#modals-here"
+            hyper = "on htmx:afterOnLoad wait 10ms then add .is-active to $shareQuoteModalId"
+
             span("icon") {
                 i("fas fa-arrow-up-from-bracket" )
             }
