@@ -1,5 +1,6 @@
 package be.kunlabora.crafters.kunlaquota.web.ui
 
+import be.kunlabora.crafters.kunlaquota.Failure
 import be.kunlabora.crafters.kunlaquota.service.*
 import be.kunlabora.crafters.kunlaquota.service.domain.Quote
 import be.kunlabora.crafters.kunlaquota.service.domain.QuoteId
@@ -32,11 +33,7 @@ fun uiRoutes(quotes: IQuotes): RouterFunctionDsl.() -> Unit = {
                     .body(wrapper("Shared quote: ${quoteShare.value}") {
                         showQuotes(quotes)
                     })
-            }.recover { failure ->
-                ServerResponse.status(HttpStatus.OK)
-                    .contentType(MediaType.TEXT_HTML)
-                    .body(partial { errorMessage("Oopsie! Something broke!", failure.message) })
-            }.get()
+            }.andHandleFailure()
     }
 
 
@@ -75,14 +72,8 @@ fun uiRoutes(quotes: IQuotes): RouterFunctionDsl.() -> Unit = {
             names.zip(texts).mapIndexed { idx, (name, text) -> Quote.Line(idx, name, text) }
         )
         quotes.execute(addQuote)
-            .map {
-                ServerResponse.status(HttpStatus.OK)
-                    .header("HX-Redirect", baseUiUrl)
-                    .build()
-            }.recover { failure ->
-                ServerResponse.status(HttpStatus.OK)
-                    .body(partial { errorMessage("Oopsie! Something broke!", failure.message) })
-            }.get()
+            .map { hxRedirectResponse() }
+            .andHandleFailure()
     }
 
     POST("share/{quoteId}") { request ->
@@ -98,13 +89,19 @@ fun uiRoutes(quotes: IQuotes): RouterFunctionDsl.() -> Unit = {
                             shareQuoteModal(quoteShareUrl)
                         }
                     )
-            }.recover { failure ->
-                ServerResponse.status(HttpStatus.OK)
-                    .contentType(MediaType.TEXT_HTML)
-                    .body(partial { errorMessage("Oopsie! Something broke!", failure.message) })
-            }.get()
+            }.andHandleFailure()
     }
 }
+
+private fun Result<Failure, ServerResponse>.andHandleFailure() =
+    recover { failure ->
+        ServerResponse.status(HttpStatus.OK)
+            .body(partial { errorMessage("Oopsie! Something broke!", failure.message) })
+    }.get()
+
+private fun hxRedirectResponse() = ServerResponse.status(HttpStatus.OK)
+    .header("HX-Redirect", baseUiUrl)
+    .build()
 
 fun wrapper(title: String, block: BODY.() -> Unit) =
     StringWriter().appendHTML().html {
