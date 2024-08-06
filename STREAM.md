@@ -17,8 +17,8 @@ Find the stream [over here on Twitch](https://twitch.tv/livecodingwithsch3lp).
 * [x] Format localdatetime output in json properly (like so: "2024-05-07T21:53:00Z" and not "[2024,05,07,21,53,00]")
 * [x] Figure out why the default objectmapper isn't used for conversion of objects to json when using RouterDsl. (It's because `@EnableWebMvc` expects you to configure and wire your own `ObjectMapper`)
 * [x] Reading a SharedQuote (KQ-4.1)
-* [ ] Reading a SharedQuote returns the surrounding quotes (KQ-4.2)
-* [ ] Do pattern matching on the Accept header: if it's application/json return json, otherwise return html
+* [x] Reading a SharedQuote returns the surrounding quotes (KQ-4.2)
+* [ ] ~~Do pattern matching on the Accept header: if it's application/json return json, otherwise return html~~
 * [ ] ResourceInitializationError: unable to pull secrets or registry auth: execution resource retrieval failed: unable to retrieve secrets from ssm: service call has been retried 5 time(s): RequestCanceled: request context canceled caused by: context deadline exceeded. Please check your task network configuration.
 
 

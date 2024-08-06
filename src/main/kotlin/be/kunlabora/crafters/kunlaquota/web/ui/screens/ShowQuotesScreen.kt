@@ -17,8 +17,8 @@ object ShowQuotesScreen {
             id = "quote-section"
             div(classes = "container") {
                 if (allQuotes.isEmpty()) {
-                    + "Be the first to create a new quote!"
-                }else allQuotes.forEach { quote(it) }
+                    +"Be the first to create a new quote!"
+                } else allQuotes.forEach { quote(it) }
             }
         }
 
@@ -34,11 +34,13 @@ object ShowQuotesScreen {
 
     private fun FlowContent.quote(quote: Quote) {
         div("card") {
+            header("card-header") {
+                p("card-header-title"){+""}
+                shareButton(quote)
+            }
             div("card-content") {
                 quote.lines.forEach { quoteLine(it); br }
-                p(classes = "subtitle") {
-                    quoteDate(quote.at)
-                }
+                quoteDate(quote.at)
             }
         }
     }
@@ -49,6 +51,15 @@ object ShowQuotesScreen {
             +line.text
         }
     }
+
+    private fun FlowContent.shareButton(quote: Quote) {
+        button(classes = "btn btn-primary card-header-icon") {
+            span("icon") {
+                i("fas fa-arrow-up-from-bracket" )
+            }
+        }
+    }
+
 
     private fun FlowContent.quoteDate(at: LocalDateTime) {
         div("is-flex is-justify-content-flex-end") {
