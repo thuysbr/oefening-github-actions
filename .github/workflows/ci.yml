@@ -33,14 +33,14 @@ jobs:
             **/build/reports/
             **/build/test-results/
 
-      - name: Set environment variables
-        run: |
-          echo "BUILD_VERSION=$(./build_version.sh)" >> $GITHUB_ENV
+#      - name: Set environment variables
+#        run: |
+#          echo "BUILD_VERSION=$(./build_version.sh)" >> $GITHUB_ENV
 
-      - name: Tag version
-        run: |
-          git tag $BUILD_VERSION
-          git push origin $BUILD_VERSION          
+#      - name: Tag version
+#        run: |
+#          git tag $BUILD_VERSION
+#          git push origin $BUILD_VERSION
 
       - name: Send message to slack
         uses: slackapi/slack-github-action@v2.0.0
