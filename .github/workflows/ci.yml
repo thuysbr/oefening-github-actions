@@ -20,9 +20,6 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v3
 
-      - name: Introduce a failure
-        run: exit 1
-
       - name: Run tests with Gradle
         run: ./gradlew test
 
